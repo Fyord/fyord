@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: '*'
+    branches: 'main'
   pull_request:
     branches: '*'
 
@@ -31,3 +31,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: ./coverage/lcov.info
+      - name: Publish to npm
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: './dist/package.json'
