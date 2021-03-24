@@ -1,0 +1,98 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": [],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "quotes": [
+      "error",
+      "single",
+      "avoid-escape"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "no-restricted-imports": [
+      "error",
+      "tsbase",
+      "tsbase-components"
+    ],
+    "curly": "error",
+    "eol-last": "error",
+    "indent": [
+      "error",
+      2
+    ],
+    "no-bitwise": "error",
+    "no-dupe-args": "error",
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "error",
+          "warn"
+        ]
+      }
+    ],
+    "prefer-const": "error",
+    "no-empty": "error",
+    "no-var": "error",
+    "no-eval": "error",
+    "no-use-before-define": "error",
+    "no-trailing-spaces": "error",
+    "no-fallthrough": "error",
+    "no-multiple-empty-lines": "error",
+    "max-len": [
+      "error",
+      150
+    ],
+    "max-lines": [
+      "error",
+      200
+    ],
+    "max-depth": [
+      "error",
+      3
+    ],
+    "no-duplicate-case": "error",
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "complexity": [
+      "error",
+      6
+    ],
+    "brace-style": [
+      "error",
+      "1tbs",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "no-multi-spaces": "error",
+    "no-unreachable": "error",
+    "no-unneeded-ternary": "error",
+    "no-extra-semi": "error",
+    "max-params": [
+      "error",
+      5
+    ],
+    "no-nested-ternary": "error"
+  }
+}
