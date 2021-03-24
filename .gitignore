@@ -1,7 +1,8 @@
 node_modules
-dist
 coverage
 TESTS*.xml
 *debug.log
 public
 .DS_Store
+dist/**/*.js
+dist/**/*.ts

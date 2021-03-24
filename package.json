@@ -5,13 +5,14 @@
   "main": "index.js",
   "private": true,
   "author": "Joseph Bayes",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "test": "jest --watch",
     "test-once": "jest --collectCoverage --coverageReporters lcov clover",
     "lint": "eslint src/**/*.ts",
     "build": "tsc --sourceMap",
-    "build-prod": "tsc"
+    "build-prod": "tsc",
+    "publish": "npm publish dist"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.17",

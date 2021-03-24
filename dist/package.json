@@ -1,0 +1,21 @@
+{
+  "name": "fyord",
+  "author": {
+    "name": "Fyord"
+  },
+  "keywords": [
+    "typescript",
+    "javascript",
+    "framework"
+  ],
+  "license": "MIT",
+  "version": "0.0.1",
+  "description": "Light-weight framework designed to embrace core competencies",
+  "private": false,
+  "main": "./module.js",
+  "types": "./module.d.ts",
+  "dependencies": {
+    "xss": "^1.0.8",
+    "tsbase": "^3.3.16"
+  }
+}
