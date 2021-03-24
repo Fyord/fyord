@@ -1,5 +1,9 @@
 {
-  "name": "@fyord/fyord",
+  "name": "fyord",
+  "repository": {
+    "type": "GitHub",
+    "url": "https://github.com/Fyord/fyord"
+  },
   "author": {
     "name": "Fyord"
   },
