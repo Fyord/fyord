@@ -1,7 +1,7 @@
 import { Mock } from 'tsmockit';
 import { Strings } from 'tsbase/Functions/Strings';
 import { IXssSanitizerService } from '../xssSanitizerService/xssSanitizerService';
-import { TestHelpers } from '../../../utilities/tests/testHelpers.spec';
+import { TestHelpers } from '../../../utilities/testHelpers';
 import { Route } from './route';
 import { IRouter, Router } from './router';
 import { EventTypes } from '../../eventTypes';

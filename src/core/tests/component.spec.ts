@@ -6,7 +6,7 @@ import { Component } from '../component';
 import { App } from '../app';
 import { EventTypes } from '../eventTypes';
 import { IRouter, Route } from '../services/module';
-import { TestHelpers } from '../../utilities/tests/testHelpers.spec';
+import { TestHelpers } from '../../utilities/testHelpers';
 
 class FakeComponent extends Component {
   ReRender = async () => this.reRender();

@@ -1,7 +1,7 @@
 import { Mock, Times } from 'tsmockit';
 import { Strings } from 'tsbase/Functions/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
-import { TestHelpers } from '../../utilities/tests/testHelpers.spec';
+import { TestHelpers } from '../../utilities/testHelpers';
 import { App } from '../app';
 import { Page } from '../page';
 import { IRouter, ISeoService, Route } from '../services/module';
