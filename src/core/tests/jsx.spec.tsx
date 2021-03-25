@@ -27,4 +27,10 @@ describe('JsxRenderer', () => {
     const expectedOuterHtml = '<div>&lt;div id="fj-"&gt;&lt;/div&gt;&lt;img src="fake" onerror="alert(1)"&gt;</div>';
     expect(JsxRenderer.RenderJsx(jsxToParse)).toContain(expectedOuterHtml);
   });
+
+  it('should set attributes defined in jsx', () => {
+    const jsxToParse = <div class="test"><p>test</p></div>;
+    const expectedOuterHtml = '<div class="test"><p>test</p></div>';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
 });

@@ -20,6 +20,7 @@ module.exports = {
     }
   },
   coveragePathIgnorePatterns: [
+    './src/utilities/testHelpers.ts',
     '/node_modules/',
     'enzyme.js'
   ],

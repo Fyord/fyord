@@ -2,6 +2,7 @@ import { Mock } from 'tsmockit';
 import { Strings } from 'tsbase/Functions/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
 import { IEventStore } from 'tsbase/Patterns/EventStore/IEventStore';
+import { ParseJsx } from '../jsx';
 import { Component } from '../component';
 import { App } from '../app';
 import { EventTypes } from '../eventTypes';
@@ -15,6 +16,10 @@ class FakeComponent extends Component {
     id, eventType, func);
   UserInput = (text: string, allowHtml?: boolean) => this.userInput(text, allowHtml);
   GetInputValue = (inputId: string, allowHtml?: boolean) => this.getInputValue(inputId, allowHtml);
+}
+
+class JsxComponent extends Component {
+  Html = async () => <p>test</p>;
 }
 
 describe('Component', () => {
@@ -55,6 +60,12 @@ describe('Component', () => {
   it('should render with wrapper', async () => {
     const output = await classUnderTest.Render();
     expect(output.startsWith(`<div id="${classUnderTest.Id}"`)).toBeTruthy();
+  });
+
+  it('should render when using jsx', async () => {
+    const jsxComponent = new JsxComponent();
+    const output = await jsxComponent.Render();
+    expect(output).toContain('<p>test</p>');
   });
 
   it('should render without wrapper', async () => {
