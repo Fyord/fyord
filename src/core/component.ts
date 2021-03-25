@@ -30,7 +30,7 @@ export abstract class Component {
     protected app = App.Instance(),
     private xssSanitizer: IXssSanitizerService = XssSanitizerService.Instance()
   ) {
-    this.Id = `fj-${Guid.NewGuid()}`;
+    this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
 
     if (routeSubscriber) {

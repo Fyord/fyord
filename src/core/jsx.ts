@@ -29,7 +29,7 @@ export class JsxRenderer {
     for (const child of jsx.children) {
       if (typeof child === 'string' || JsxRenderer.nodeIsNumberOrBoolean(child)) {
         const childText = child.toString();
-        if (childText.trim().startsWith('<div id="fj-')) {
+        if (childText.trim().startsWith('<div id="fy-')) {
           JsxRenderer.appendLegitimateComponentsToHtml(childText, dom, child);
         } else {
           dom.appendChild(document.createTextNode(childText));
