@@ -29,5 +29,11 @@ module.exports = {
     'lcov',
     'text',
     'text-summary'
-  ]
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      statements: 100
+    }
+  }
 };
