@@ -6,4 +6,5 @@ public
 .DS_Store
 dist/**/*.js
 dist/**/*.ts
+dist/**/*.map
 workspace.*

@@ -29,8 +29,7 @@
     ],
     "no-restricted-imports": [
       "error",
-      "tsbase",
-      "tsbase-components"
+      "tsbase"
     ],
     "curly": "error",
     "eol-last": "error",
