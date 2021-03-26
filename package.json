@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "private": true,
-  "author": "Joseph Bayes",
+  "author": "Fyord",
   "license": "MIT",
   "scripts": {
     "test": "jest --watch",
