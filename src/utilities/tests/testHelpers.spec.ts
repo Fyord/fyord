@@ -35,7 +35,7 @@ describe('TestHelpers', () => {
   });
 
   it('should return mocks needed to test a page', () => {
-    const pageMocks = TestHelpers.GetPageMocks();
+    const pageMocks = TestHelpers.GetComponentMocks();
 
     expect(pageMocks.mockDocument).toBeDefined();
     expect(pageMocks.mockApp).toBeDefined();

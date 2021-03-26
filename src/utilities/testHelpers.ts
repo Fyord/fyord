@@ -5,7 +5,7 @@ import { App, IRouter, ISeoService, Route } from '../core/module';
 import { Strings } from 'tsbase/Constants/Strings';
 
 export class TestHelpers {
-  public static GetPageMocks() {
+  public static GetComponentMocks() {
     const mockRoute = new Mock<Observable<Route>>();
     const mockRouter = new Mock<IRouter>();
     const mockApp = new Mock<App>();
