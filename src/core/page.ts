@@ -20,6 +20,8 @@ export abstract class Page extends Component {
    */
   public abstract Route: (route: Route) => boolean;
   public Title: string = Strings.Empty;
+  public Description: string = Strings.Empty;
+  public ImageUrl: string = Strings.Empty;
   private boundPath = Strings.Empty;
 
   constructor(
@@ -42,7 +44,6 @@ export abstract class Page extends Component {
       const pathIsNew = currentPath !== this.boundPath;
 
       if (!this.Element || pathIsNew) {
-        this.seoService.SetDefaultTags();
         this.boundPath = currentPath;
         this.renderPageInMain(route as Route);
         this.setBehaviorIfComponentIsRendered();
@@ -55,7 +56,7 @@ export abstract class Page extends Component {
   }
 
   private async renderPageInMain(route: Route) {
-    this.seoService.SetDefaultTags(this.Title);
+    this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
     const markup = await this.Render(route);
     if (this.app.Router.RouteHandled === this.Id) {
       this.app.Main.innerHTML = `${markup}\n${this.RenderMode}`;
