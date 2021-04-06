@@ -8,14 +8,18 @@ import { App } from '../app';
 import { EventTypes } from '../eventTypes';
 import { IRouter, Route } from '../services/module';
 import { TestHelpers } from '../../utilities/testHelpers';
+import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 
 class FakeComponent extends Component {
   ReRender = async () => this.reRender();
   UseAppStore = async (path: string) => this.useAppStore(path);
+  UseState = async (path: string, initialState: any) => this.useState(path, initialState);
   AddEventListenerToId = (id: string, eventType: EventTypes, func: (event: Event | null) => any) => this.addEventListenerToId(
     id, eventType, func);
   UserInput = (text: string, allowHtml?: boolean) => this.userInput(text, allowHtml);
   GetInputValue = (inputId: string, allowHtml?: boolean) => this.getInputValue(inputId, allowHtml);
+  SetState = (state: IEventStore<any>) => this.state = state as EventStore<any>;
+  SetStateAt = (value: any, path: string) => this.state.SetStateAt(value, path);
 }
 
 class JsxComponent extends Component {
@@ -26,10 +30,12 @@ describe('Component', () => {
   let classUnderTest: FakeComponent;
   const mockDocument = new Mock<Document>();
   const mockEventStore = new Mock<IEventStore<any>>();
+  const mockComponentState = new Mock<IEventStore<any>>();
   const mockApp = new Mock<App>();
   const mockRouter = new Mock<IRouter>();
   const fakeRoute = new Observable<Route>();
   const fakeStateObservable = new Observable<string>();
+  const fakeComponentStateObservable = new Observable<string>();
 
   beforeEach(() => {
     mockDocument.Setup(d => d.getElementById(Strings.Empty), null);
@@ -40,7 +46,12 @@ describe('Component', () => {
     mockEventStore.Setup(s => s.GetStateAt(Strings.Empty), Strings.Empty);
     mockEventStore.Setup(s => s.SetStateAt(Strings.Empty, Strings.Empty));
 
+    mockComponentState.Setup(s => s.ObservableAt(Strings.Empty), fakeComponentStateObservable);
+    mockComponentState.Setup(s => s.GetStateAt(Strings.Empty), Strings.Empty);
+    mockComponentState.Setup(s => s.SetStateAt(Strings.Empty, Strings.Empty));
+
     classUnderTest = new FakeComponent(true, mockDocument.Object, mockApp.Object);
+    classUnderTest.SetState(mockComponentState.Object);
   });
 
   it('should construct', () => {
@@ -124,6 +135,19 @@ describe('Component', () => {
 
     expect(state()).toEqual(value);
     mockEventStore.Verify(s => s.GetStateAt(path), 2);
+  });
+
+  it('should use the component store to get the current state and trigger re renders on state change', async () => {
+    const path = 'test';
+    const value = 'value';
+    mockComponentState.Setup(s => s.GetStateAt(path), value);
+
+    const state = await classUnderTest.UseState(path, value);
+    expect(state()).toEqual(value);
+    fakeComponentStateObservable.Publish('new value');
+
+    expect(state()).toEqual(value);
+    mockComponentState.Verify(s => s.GetStateAt(path), 2);
   });
 
   it('should add an event listener to an element with the given id', () => {
