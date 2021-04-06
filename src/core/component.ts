@@ -2,6 +2,7 @@ import { Strings } from 'tsbase/Functions/Strings';
 import { Guid } from 'tsbase/Functions/Guid';
 import { Result } from 'tsbase/Patterns/Result/Result';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
+import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 import { IXssSanitizerService, Route, XssSanitizerService } from './services/module';
 import { App } from './app';
 import { EventTypes } from './eventTypes';
@@ -9,6 +10,7 @@ import { Jsx, JsxRenderer } from './jsx';
 
 export abstract class Component {
   public static IssuedIds = new Array<string>();
+  protected state = new EventStore<any>();
   private routeSubscription: string = Strings.Empty;
   private ids = new Map<string, string>();
 
@@ -94,6 +96,19 @@ export abstract class Component {
     });
 
     return () => this.app.Store.GetStateAt<T>(statePath);
+  }
+
+  /**
+   * Returns the component state at the given path and subscribes to changes triggering a re-render
+   * @param statePath
+   */
+  protected useState<T>(statePath: string, initialState: T): () => T | undefined {
+    this.state.SetStateAt(initialState, statePath);
+    this.state.ObservableAt<T>(statePath).Subscribe(() => {
+      this.reRender(this.app.Router.CurrentRoute);
+    });
+
+    return () => this.state.GetStateAt<T>(statePath);
   }
 
   /**

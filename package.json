@@ -10,7 +10,7 @@
     "test": "jest --watch",
     "test-once": "jest --collectCoverage --coverageReporters lcov clover",
     "lint": "eslint src/**/*.ts",
-    "build": "tsc --sourceMap",
+    "build": "tsc --sourceMap --watch",
     "build-prod": "tsc",
     "publish": "npm publish dist"
   },

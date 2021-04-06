@@ -2,6 +2,7 @@ import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { EventStore } from 'tsbase/Patterns/EventStore/module';
 import { Observable } from 'tsbase/Patterns/Observable/module';
 import { Logger } from 'tsbase/Utility/Logger/Logger';
+import { Strings } from 'tsbase/Functions/Strings';
 import { Environments, DevelopmentEnvironmentVariables, ProductionEnvironmentVariables } from './environments';
 import { IRouter, Router } from './services/module';
 
@@ -64,7 +65,7 @@ export class App {
   }
 
   public InitializeStore<T>(state: T): void {
-    this.Store.SetStateAt<T>(state, '');
+    this.Store.SetStateAt<T>(state, Strings.Empty);
   }
 
   public async Start(initialLayout: () => Promise<string>): Promise<void> {
@@ -81,13 +82,13 @@ export class App {
 
   private restoreDefaultLayoutOnRoute(layout: string) {
     this.Router.Route.Subscribe(() => {
-      this.setRootElement(rootElementIds.layout, layout || '', true);
+      this.setRootElement(rootElementIds.layout, layout || Strings.Empty, true);
     });
   }
 
   private subscribeToLayoutChanges() {
     this.Layout.Subscribe(layout => {
-      this.setRootElement(rootElementIds.layout, layout || '', false);
+      this.setRootElement(rootElementIds.layout, layout || Strings.Empty, false);
     });
   }
 
