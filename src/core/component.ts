@@ -8,6 +8,8 @@ import { App } from './app';
 import { EventTypes } from './eventTypes';
 import { Jsx, JsxRenderer } from './jsx';
 
+export type StateFunction<T> = (newValue?: T) => (T | undefined);
+
 export abstract class Component {
   public static IssuedIds = new Array<string>();
   protected state = new EventStore<any>();
@@ -90,25 +92,31 @@ export abstract class Component {
    * Returns the app store state at the given path and subscribes to changes triggering a re-render
    * @param statePath
    */
-  protected useAppStore<T>(statePath: string): () => T | undefined {
-    this.app.Store.ObservableAt<T>(statePath).Subscribe(() => {
-      this.reRender(this.app.Router.CurrentRoute);
-    });
-
-    return () => this.app.Store.GetStateAt<T>(statePath);
+  protected useAppStore<T>(statePath: string): StateFunction<T> {
+    return this.subscribeToAndReturnState(this.app.Store, statePath);
   }
 
   /**
    * Returns the component state at the given path and subscribes to changes triggering a re-render
-   * @param statePath
+   * @param statePath sets the initial (first render) state
    */
-  protected useState<T>(statePath: string, initialState: T): () => T | undefined {
+  protected useState<T>(statePath: string, initialState: T): StateFunction<T> {
     this.state.SetStateAt(initialState, statePath);
-    this.state.ObservableAt<T>(statePath).Subscribe(() => {
+    return this.subscribeToAndReturnState(this.state, statePath);
+  }
+
+  private subscribeToAndReturnState<T>(store: EventStore<any>, path: string): StateFunction<T> {
+    store.ObservableAt<T>(path).Subscribe(() => {
       this.reRender(this.app.Router.CurrentRoute);
     });
 
-    return () => this.state.GetStateAt<T>(statePath);
+    return (newValue?: T) => {
+      if (newValue) {
+        store.SetStateAt(newValue, path);
+      }
+
+      return store.GetStateAt<T>(path);
+    };
   }
 
   /**

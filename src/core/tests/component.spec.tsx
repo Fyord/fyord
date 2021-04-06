@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Mock } from 'tsmockit';
 import { Strings } from 'tsbase/Functions/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
@@ -144,10 +145,10 @@ describe('Component', () => {
 
     const state = await classUnderTest.UseState(path, value);
     expect(state()).toEqual(value);
-    fakeComponentStateObservable.Publish('new value');
+    state('new value');
 
     expect(state()).toEqual(value);
-    mockComponentState.Verify(s => s.GetStateAt(path), 2);
+    mockComponentState.Verify(s => s.GetStateAt(path), 3);
   });
 
   it('should add an event listener to an element with the given id', () => {
