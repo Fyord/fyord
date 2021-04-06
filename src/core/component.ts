@@ -111,7 +111,7 @@ export abstract class Component {
     });
 
     return (newValue?: T) => {
-      if (newValue) {
+      if (typeof newValue !== 'undefined') {
         store.SetStateAt(newValue, path);
       }
 
