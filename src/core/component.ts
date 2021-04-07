@@ -4,7 +4,7 @@ import { Result } from 'tsbase/Patterns/Result/Result';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 import { IXssSanitizerService, Route, XssSanitizerService } from './services/module';
-import { App } from './app';
+import { App as _App } from './app';
 import { EventTypes } from './eventTypes';
 import { Jsx, JsxRenderer } from './jsx';
 
@@ -12,7 +12,7 @@ export type StateFunction<T> = (newValue?: T) => (T | undefined);
 
 export abstract class Component {
   public static IssuedIds = new Array<string>();
-  protected state = new EventStore<any>();
+  public State = new EventStore<any>();
   private routeSubscription: string = Strings.Empty;
   private ids = new Map<string, string>();
 
@@ -31,18 +31,18 @@ export abstract class Component {
   constructor(
     routeSubscriber = true,
     protected windowDocument: Document = document,
-    protected app = App.Instance(),
+    public App = _App.Instance(),
     private xssSanitizer: IXssSanitizerService = XssSanitizerService.Instance()
   ) {
     this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
 
     if (routeSubscriber) {
-      this.routeSubscription = app.Router.Route.Subscribe(() => {
+      this.routeSubscription = App.Router.Route.Subscribe(() => {
         this.setBehaviorIfComponentIsRendered();
 
         if (!this.Element) {
-          app.Router.Route.Cancel(this.routeSubscription);
+          App.Router.Route.Cancel(this.routeSubscription);
         }
       });
     }
@@ -81,42 +81,11 @@ export abstract class Component {
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior
    * @param route
    */
-  protected async reRender(route?: Route): Promise<void> {
+  public async ReRender(route?: Route): Promise<void> {
     if (this.Element) {
       this.Element.innerHTML = await this.Render(route, false);
       this.setBehaviorIfComponentIsRendered();
     }
-  }
-
-  /**
-   * Returns the app store state at the given path and subscribes to changes triggering a re-render
-   * @param statePath
-   */
-  protected useAppStore<T>(statePath: string): StateFunction<T> {
-    return this.subscribeToAndReturnState(this.app.Store, statePath);
-  }
-
-  /**
-   * Returns the component state at the given path and subscribes to changes triggering a re-render
-   * @param statePath sets the initial (first render) state
-   */
-  protected useState<T>(statePath: string, initialState: T): StateFunction<T> {
-    this.state.SetStateAt(initialState, statePath);
-    return this.subscribeToAndReturnState(this.state, statePath);
-  }
-
-  private subscribeToAndReturnState<T>(store: EventStore<any>, path: string): StateFunction<T> {
-    store.ObservableAt<T>(path).Subscribe(() => {
-      this.reRender(this.app.Router.CurrentRoute);
-    });
-
-    return (newValue?: T) => {
-      if (typeof newValue !== 'undefined') {
-        store.SetStateAt(newValue, path);
-      }
-
-      return store.GetStateAt<T>(path);
-    };
   }
 
   /**

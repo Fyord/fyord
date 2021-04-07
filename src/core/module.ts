@@ -5,3 +5,4 @@ export * from './component';
 export * from './page';
 export * from './app';
 export * from './services/module';
+export * from './decorators/module';
