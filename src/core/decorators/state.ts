@@ -1,3 +1,4 @@
+import { App } from '../app';
 import { Component } from '../component';
 
 enum StoreType {
@@ -6,41 +7,39 @@ enum StoreType {
 }
 
 function definePropertyForStateInStore(target: Component, key: string, storeType: StoreType) {
-  if (delete target[key]) {
-    const getter = function () {
-      // @ts-ignore
-      const component = this as Component;
-      const subKey = `${storeType}-store-${key}`;
-      const store = storeType === StoreType.App ? component.App.Store : component.State;
+  const getter = function () {
+    // @ts-ignore
+    const component = this as Component;
+    const subKey = `${storeType}-store-${key}`;
+    const store = storeType === StoreType.App ? App.Instance().Store : component.State;
 
-      if (!component[subKey]) {
-        const subId = store.ObservableAt(key).Subscribe(() => {
-          component.ReRender(component.App.Router.CurrentRoute);
-        });
-        component[subKey] = subId;
-      }
+    if (!component[subKey]) {
+      const subId = store.ObservableAt(key).Subscribe(() => {
+        component.ReRender(App.Instance().Router.CurrentRoute);
+      });
+      component[subKey] = subId;
+    }
 
-      return store.GetStateAt(key);
-    };
+    return store.GetStateAt(key);
+  };
 
-    const setter = function (newValue) {
-      // @ts-ignore
-      const component = this as Component;
-      const store = storeType === StoreType.App ? component.App.Store : component.State;
-      store.SetStateAt(newValue, key);
-    };
+  const setter = function (newValue) {
+    // @ts-ignore
+    const component = this as Component;
+    const store = storeType === StoreType.App ? App.Instance().Store : component.State;
+    store.SetStateAt(newValue, key);
+  };
 
-    Object.defineProperty(target, key, {
-      get: getter,
-      set: setter
-    });
-  }
-}
-
-export function AppStore(target: Component, key: string) {
-  definePropertyForStateInStore(target, key, StoreType.App);
+  Object.defineProperty(target, key, {
+    get: getter,
+    set: setter
+  });
 }
 
 export function State(target: Component, key: string) {
   definePropertyForStateInStore(target, key, StoreType.Component);
+}
+
+export function AppStore(target: Component, key: string) {
+  definePropertyForStateInStore(target, key, StoreType.App);
 }

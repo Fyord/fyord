@@ -34,7 +34,7 @@ export class JsxRenderer {
         } else {
           dom.appendChild(document.createTextNode(childText));
         }
-      } else if (child) {
+      } else {
         dom.appendChild(JsxRenderer.transformJsxToHtml(child));
       }
     }
