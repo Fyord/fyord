@@ -3,7 +3,7 @@ import { EventStore } from 'tsbase/Patterns/EventStore/module';
 import { Observable } from 'tsbase/Patterns/Observable/module';
 import { Logger } from 'tsbase/Utility/Logger/Logger';
 import { Strings } from 'tsbase/Functions/Strings';
-import { Environments, DevelopmentEnvironmentVariables, ProductionEnvironmentVariables } from './environments';
+import { Environments } from './environments';
 import { IRouter, Router } from './services/module';
 
 const rootId = 'app-root';
@@ -14,17 +14,21 @@ const rootElementIds = {
 
 export class App {
   private static loggerSubscription: string | null = null;
-  private static environment: string;
+  private static environment: Environments;
   private static instance: App | null = null;
+
+  // eslint-disable-next-line max-params
   public static Instance(
     environment?: string,
+    productionEnvironmentVariables = new Map<string, string>(),
+    developmentEnvironmentVariables = new Map<string, string>(),
     router: IRouter = Router.Instance(),
     windowDocument: Document = document,
     mainConsole = globalThis.console
   ): App {
     if (this.instance === null) {
-      App.environment = environment === Environments.Production ? Environments.Production : Environments.Development;
-      this.instance = new App(router, windowDocument, mainConsole);
+      App.environment = environment === Environments.Development ? Environments.Development : Environments.Production;
+      this.instance = new App(router, windowDocument, mainConsole, productionEnvironmentVariables, developmentEnvironmentVariables);
     }
 
     return this.instance;
@@ -53,12 +57,14 @@ export class App {
   private constructor(
     public Router: IRouter,
     private windowDocument: Document,
-    mainConsole: Console
+    mainConsole: Console,
+    productionEnvironmentVariables: Map<string, string>,
+    developmentEnvironmentVariables: Map<string, string>
   ) {
     if (App.environment === Environments.Production) {
-      this.EnvironmentVariables = ProductionEnvironmentVariables;
+      this.EnvironmentVariables = productionEnvironmentVariables;
     } else {
-      this.EnvironmentVariables = DevelopmentEnvironmentVariables;
+      this.EnvironmentVariables = developmentEnvironmentVariables;
 
       App.loggerSubscription = this.Logger.EntryLogged.Subscribe(logEntry => mainConsole.warn(logEntry));
     }
