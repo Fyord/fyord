@@ -1,5 +1,7 @@
+import { Guid } from 'tsbase/Functions/Guid';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Component } from './component';
+import { EventTypes } from './eventTypes';
 
 export type Jsx = {
   attributes: Record<string, string>,
@@ -20,9 +22,22 @@ export class JsxRenderer {
   // eslint-disable-next-line complexity
   private static transformJsxToHtml(jsx: Jsx): HTMLElement {
     const dom: HTMLElement = document.createElement(jsx.nodeName);
+
     for (const key in jsx.attributes) {
       new Command(() => {
-        dom.setAttribute(key, jsx.attributes[key]);
+        if (key.startsWith('on')) {
+          const event = key.split('on')[1] as EventTypes;
+          const func = jsx.attributes[key] as unknown as (event: Event | null) => any;
+          const id = jsx.attributes['id'] ? jsx.attributes['id'] : Guid.NewGuid();
+          dom.setAttribute('id', id);
+
+          setTimeout(() => {
+            const element = document.getElementById(id) as HTMLElement;
+            element.addEventListener(event, func);
+          });
+        } else {
+          dom.setAttribute(key, jsx.attributes[key]);
+        }
       }).Execute();
     }
 
