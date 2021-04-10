@@ -4,7 +4,7 @@ import { Result } from 'tsbase/Patterns/Result/Result';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 import { IXssSanitizerService, Route, XssSanitizerService } from './services/module';
-import { App } from './app';
+import { App as _App } from './app';
 import { EventTypes } from './eventTypes';
 import { Jsx, JsxRenderer } from './jsx';
 
@@ -31,18 +31,18 @@ export abstract class Component {
   constructor(
     routeSubscriber = true,
     protected windowDocument: Document = document,
-    protected app = App.Instance(),
+    public App = _App.Instance(),
     private xssSanitizer: IXssSanitizerService = XssSanitizerService.Instance()
   ) {
     this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
 
     if (routeSubscriber) {
-      this.routeSubscription = app.Router.Route.Subscribe(() => {
+      this.routeSubscription = App.Router.Route.Subscribe(() => {
         this.setBehaviorIfComponentIsRendered();
 
         if (!this.Element) {
-          app.Router.Route.Cancel(this.routeSubscription);
+          App.Router.Route.Cancel(this.routeSubscription);
         }
       });
     }

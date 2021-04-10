@@ -36,7 +36,7 @@ export abstract class Page extends Component {
     });
   }
 
-  private routeMatch = (route: Route | undefined) => !this.app.Router.RouteHandled && route && this.Route(route);
+  private routeMatch = (route: Route | undefined) => !this.App.Router.RouteHandled && route && this.Route(route);
 
   private handleRouteChange(route: Route | undefined): void {
     if (this.routeMatch(route)) {
@@ -49,7 +49,7 @@ export abstract class Page extends Component {
         this.setBehaviorIfComponentIsRendered();
       }
 
-      this.app.Router.RouteHandled = this.Id;
+      this.App.Router.RouteHandled = this.Id;
     } else {
       this.boundPath = Strings.Empty;
     }
@@ -58,8 +58,8 @@ export abstract class Page extends Component {
   private async renderPageInMain(route: Route) {
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
     const markup = await this.Render(route);
-    if (this.app.Router.RouteHandled === this.Id) {
-      this.app.Main.innerHTML = `${markup}\n${this.RenderMode}`;
+    if (this.App.Router.RouteHandled === this.Id) {
+      this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
     }
   }
 }

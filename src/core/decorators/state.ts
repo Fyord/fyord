@@ -1,4 +1,3 @@
-import { App } from '../app';
 import { Component } from '../component';
 
 enum StoreType {
@@ -11,11 +10,11 @@ function definePropertyForStateInStore(target: Component, key: string, storeType
     // @ts-ignore
     const component = this as Component;
     const subKey = `${storeType}-store-${key}`;
-    const store = storeType === StoreType.App ? App.Instance().Store : component.State;
+    const store = storeType === StoreType.App ? component.App.Store : component.State;
 
     if (!component[subKey]) {
       const subId = store.ObservableAt(key).Subscribe(() => {
-        component.ReRender(App.Instance().Router.CurrentRoute);
+        component.ReRender(component.App.Router.CurrentRoute);
       });
       component[subKey] = subId;
     }
@@ -26,7 +25,7 @@ function definePropertyForStateInStore(target: Component, key: string, storeType
   const setter = function (newValue) {
     // @ts-ignore
     const component = this as Component;
-    const store = storeType === StoreType.App ? App.Instance().Store : component.State;
+    const store = storeType === StoreType.App ? component.App.Store : component.State;
     store.SetStateAt(newValue, key);
   };
 
