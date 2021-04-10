@@ -33,4 +33,11 @@ describe('JsxRenderer', () => {
     const expectedOuterHtml = '<div class="test"><p>test</p></div>';
     expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
   });
+
+  it('should return jsx when a child is undefined', () => {
+    const undefinedVariable = undefined;
+    const jsxToParse = <div>{undefinedVariable}</div>;
+    const expectedOuterHtml = '<div></div>';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
 });
