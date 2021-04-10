@@ -12,7 +12,7 @@ export type StateFunction<T> = (newValue?: T) => (T | undefined);
 
 export abstract class Component {
   public static IssuedIds = new Array<string>();
-  protected state = new EventStore<any>();
+  public State = new EventStore<any>();
   private routeSubscription: string = Strings.Empty;
   private ids = new Map<string, string>();
 
@@ -81,42 +81,11 @@ export abstract class Component {
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior
    * @param route
    */
-  protected async reRender(route?: Route): Promise<void> {
+  public async ReRender(route?: Route): Promise<void> {
     if (this.Element) {
       this.Element.innerHTML = await this.Render(route, false);
       this.setBehaviorIfComponentIsRendered();
     }
-  }
-
-  /**
-   * Returns the app store state at the given path and subscribes to changes triggering a re-render
-   * @param statePath
-   */
-  protected useAppStore<T>(statePath: string): StateFunction<T> {
-    return this.subscribeToAndReturnState(this.app.Store, statePath);
-  }
-
-  /**
-   * Returns the component state at the given path and subscribes to changes triggering a re-render
-   * @param statePath sets the initial (first render) state
-   */
-  protected useState<T>(statePath: string, initialState: T): StateFunction<T> {
-    this.state.SetStateAt(initialState, statePath);
-    return this.subscribeToAndReturnState(this.state, statePath);
-  }
-
-  private subscribeToAndReturnState<T>(store: EventStore<any>, path: string): StateFunction<T> {
-    store.ObservableAt<T>(path).Subscribe(() => {
-      this.reRender(this.app.Router.CurrentRoute);
-    });
-
-    return (newValue?: T) => {
-      if (typeof newValue !== 'undefined') {
-        store.SetStateAt(newValue, path);
-      }
-
-      return store.GetStateAt<T>(path);
-    };
   }
 
   /**

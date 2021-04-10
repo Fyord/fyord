@@ -12,15 +12,12 @@ import { TestHelpers } from '../../utilities/testHelpers';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 
 class FakeComponent extends Component {
-  ReRender = async () => this.reRender();
-  UseAppStore = async (path: string) => this.useAppStore(path);
-  UseState = async (path: string, initialState: any) => this.useState(path, initialState);
   AddEventListenerToId = (id: string, eventType: EventTypes, func: (event: Event | null) => any) => this.addEventListenerToId(
     id, eventType, func);
   UserInput = (text: string, allowHtml?: boolean) => this.userInput(text, allowHtml);
   GetInputValue = (inputId: string, allowHtml?: boolean) => this.getInputValue(inputId, allowHtml);
-  SetState = (state: IEventStore<any>) => this.state = state as EventStore<any>;
-  SetStateAt = (value: any, path: string) => this.state.SetStateAt(value, path);
+  SetState = (state: IEventStore<any>) => this.State = state as EventStore<any>;
+  SetStateAt = (value: any, path: string) => this.State.SetStateAt(value, path);
 }
 
 class JsxComponent extends Component {
@@ -122,33 +119,6 @@ describe('Component', () => {
   it('should not re-render the contents of the component when it is not rendered', async () => {
     mockDocument.Setup(d => d.getElementById(classUnderTest.Id), null);
     await classUnderTest.ReRender();
-  });
-
-  it('should use the app store to get the current state and trigger re renders on state change', async () => {
-    const path = 'test';
-    const value = 'value';
-    mockEventStore.Setup(s => s.GetStateAt(path), value);
-
-    App.Instance().Store.SetStateAt(value, path);
-    const state = await classUnderTest.UseAppStore(path);
-    expect(state()).toEqual(value);
-    fakeStateObservable.Publish('new value');
-
-    expect(state()).toEqual(value);
-    mockEventStore.Verify(s => s.GetStateAt(path), 2);
-  });
-
-  it('should use the component store to get the current state and trigger re renders on state change', async () => {
-    const path = 'test';
-    const value = 'value';
-    mockComponentState.Setup(s => s.GetStateAt(path), value);
-
-    const state = await classUnderTest.UseState(path, value);
-    expect(state()).toEqual(value);
-    state('new value');
-
-    expect(state()).toEqual(value);
-    mockComponentState.Verify(s => s.GetStateAt(path), 3);
   });
 
   it('should add an event listener to an element with the given id', () => {
