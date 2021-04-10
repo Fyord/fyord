@@ -2,7 +2,7 @@ import { Guid } from 'tsbase/Functions/Guid';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Component } from './component';
 import { EventTypes } from './eventTypes';
-import { DomEvents } from "./domEvents";
+import { DomEvents } from './domEvents';
 
 export type Jsx = {
   attributes: Record<string, string>,
@@ -38,11 +38,11 @@ export class JsxRenderer {
 
     for (const key in jsx.attributes) {
       new Command(() => {
-          if (DomEvents.includes(key)) {
-            this.addElementEventListener(key, jsx, dom);
-          } else {
-            dom.setAttribute(key, jsx.attributes[key]);
-          }
+        if (DomEvents.includes(key)) {
+          this.addElementEventListener(key, jsx, dom);
+        } else {
+          dom.setAttribute(key, jsx.attributes[key]);
+        }
       }).Execute();
     }
 
