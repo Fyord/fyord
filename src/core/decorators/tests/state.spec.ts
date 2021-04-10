@@ -34,7 +34,7 @@ describe('State Decorators', () => {
       .toEqual(1);
   });
 
-  it('should not add additional app store subscribers once one is set', () => {
+  it('should not add additional state subscribers once one is set', () => {
     testComponent.StateTest;
     testComponent.StateTest;
 
