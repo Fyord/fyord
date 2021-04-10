@@ -7,7 +7,7 @@ export class TestComponent extends Component {
   @AppStore public AppStoreTest?: number;
 }
 
-describe('DataBind Decorator', () => {
+describe('State Decorators', () => {
   const testComponent = new TestComponent();
 
   it('should get properties', () => {
