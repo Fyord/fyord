@@ -1,9 +1,24 @@
 import { Mock, Times } from 'tsmockit';
 import { Observable } from 'tsbase/Patterns/Observable/module';
-import { Environments, EnvironmentVariables } from '../environments';
+import { Environments } from '../environments';
 import { App } from '../app';
 import { IRouter, Route } from '../services/module';
 import { LogEntry } from 'tsbase/Utility/Logger/LogEntry';
+
+enum EnvironmentVariables {
+  Mode = 'mode',
+  ApiServer = 'apiServer'
+}
+
+const DevelopmentEnvironmentVariables = new Map<string, string>([
+  [EnvironmentVariables.Mode, Environments.Development],
+  [EnvironmentVariables.ApiServer, 'http://localhost:5000']
+]);
+
+const ProductionEnvironmentVariables = new Map<string, string>([
+  [EnvironmentVariables.Mode, Environments.Production],
+  [EnvironmentVariables.ApiServer, 'http://www.example.com/api']
+]);
 
 describe('App', () => {
   let classUnderTest: App;
@@ -16,7 +31,13 @@ describe('App', () => {
     mockDocument.Setup(d => d.getElementById('app-root'), appRootDiv);
     mockConsole.Setup(c => c.warn({} as LogEntry));
 
-    classUnderTest = App.Instance(Environments.Development, mockRouter.Object, mockDocument.Object, mockConsole.Object);
+    classUnderTest = App.Instance(
+      Environments.Development,
+      ProductionEnvironmentVariables,
+      DevelopmentEnvironmentVariables,
+      mockRouter.Object,
+      mockDocument.Object,
+      mockConsole.Object);
   });
 
   it('should construct with no environment defined', () => {
@@ -32,7 +53,12 @@ describe('App', () => {
 
   it('should construct in development', () => {
     App.Destroy();
-    classUnderTest = App.Instance(Environments.Development, mockRouter.Object, mockDocument.Object);
+    classUnderTest = App.Instance(
+      Environments.Development,
+      ProductionEnvironmentVariables,
+      DevelopmentEnvironmentVariables,
+      mockRouter.Object,
+      mockDocument.Object);
 
     expect(classUnderTest).toBeDefined();
     expect(classUnderTest.EnvironmentVariables.get(EnvironmentVariables.Mode))
@@ -41,7 +67,12 @@ describe('App', () => {
 
   it('should construct in production', () => {
     App.Destroy();
-    classUnderTest = App.Instance(Environments.Production, mockRouter.Object, mockDocument.Object);
+    classUnderTest = App.Instance(
+      Environments.Production,
+      ProductionEnvironmentVariables,
+      DevelopmentEnvironmentVariables,
+      mockRouter.Object,
+      mockDocument.Object);
 
     expect(classUnderTest).toBeDefined();
     expect(classUnderTest.EnvironmentVariables.get(EnvironmentVariables.Mode))
@@ -70,7 +101,12 @@ describe('App', () => {
     mockRouter.Setup(r => r.UseClientRouting());
     mockRouter.Setup(r => r.GetRouteFromHref(''), {} as Route);
     mockRouter.Setup(r => r.Route, fakeRouteObservable);
-    classUnderTest = App.Instance(Environments.Production, mockRouter.Object, mockDocument.Object);
+    classUnderTest = App.Instance(
+      Environments.Production,
+      ProductionEnvironmentVariables,
+      DevelopmentEnvironmentVariables,
+      mockRouter.Object,
+      mockDocument.Object);
     const layout = async () => '';
 
     await classUnderTest.Start(layout);
@@ -98,7 +134,13 @@ describe('App', () => {
     App.Destroy();
     const fakeLogEntry = new LogEntry('test');
     mockConsole.Setup(c => c.warn(fakeLogEntry));
-    classUnderTest = App.Instance(Environments.Production, mockRouter.Object, mockDocument.Object, mockConsole.Object);
+    classUnderTest = App.Instance(
+      Environments.Production,
+      ProductionEnvironmentVariables,
+      DevelopmentEnvironmentVariables,
+      mockRouter.Object,
+      mockDocument.Object,
+      mockConsole.Object);
 
     classUnderTest.Logger.Log(fakeLogEntry);
 
@@ -109,7 +151,13 @@ describe('App', () => {
     App.Destroy();
     const fakeLogEntry = new LogEntry('test');
     mockConsole.Setup(c => c.warn(fakeLogEntry));
-    classUnderTest = App.Instance(Environments.Development, mockRouter.Object, mockDocument.Object, mockConsole.Object);
+    classUnderTest = App.Instance(
+      Environments.Development,
+      ProductionEnvironmentVariables,
+      DevelopmentEnvironmentVariables,
+      mockRouter.Object,
+      mockDocument.Object,
+      mockConsole.Object);
 
     classUnderTest.Logger.Log(fakeLogEntry);
 
