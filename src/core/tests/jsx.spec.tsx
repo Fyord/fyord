@@ -1,5 +1,6 @@
 import { Component } from '../component';
 import { JsxRenderer, ParseJsx } from '../jsx';
+import { TestHelpers } from '../../utilities/testHelpers';
 
 describe('JsxRenderer', () => {
   it('should return the outer html of a parsed jsx node with only inner text', () => {
@@ -39,5 +40,26 @@ describe('JsxRenderer', () => {
     const jsxToParse = <div>{undefinedVariable}</div>;
     const expectedOuterHtml = '<div></div>';
     expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
+
+  it('should add event listeners to bound events', async () => {
+    let testVariable = 0;
+    const jsxToParse = <button id="test-id" onclick={() => testVariable = 1}></button>;
+    const renderedHtml = JsxRenderer.RenderJsx(jsxToParse);
+    document.body.innerHTML = renderedHtml;
+
+    const eventProperlyBound = await TestHelpers.TimeLapsedCondition(() => {
+      document.getElementById('test-id')?.click();
+      return testVariable === 1;
+    });
+
+    expect(renderedHtml).toEqual('<button id="test-id"></button>');
+    expect(eventProperlyBound).toBeTruthy();
+  });
+
+  it('should add guid ids for bound events if none are given', () => {
+    const jsxToParse = <button onclick={() => true}></button>;
+    const renderedHtml = JsxRenderer.RenderJsx(jsxToParse);
+    expect(renderedHtml.startsWith('<button id=')).toBeTruthy();
   });
 });

@@ -1,5 +1,8 @@
+import { Guid } from 'tsbase/Functions/Guid';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Component } from './component';
+import { EventTypes } from './eventTypes';
+import { DomEvents } from './domEvents';
 
 export type Jsx = {
   attributes: Record<string, string>,
@@ -17,13 +20,30 @@ export class JsxRenderer {
     return JsxRenderer.transformJsxToHtml(jsx).outerHTML;
   }
 
+  private static addElementEventListener(attribute: string, jsx: Jsx, element: HTMLElement) {
+    const event = attribute.split('on')[1] as EventTypes;
+    const func = jsx.attributes[attribute] as unknown as (event: Event | null) => any;
+    const id = element.attributes['id'] ? element.attributes['id'].nodeValue : Guid.NewGuid();
+    element.setAttribute('id', id);
+
+    setTimeout(() => {
+      new Command(() => {
+        const element = document.getElementById(id) as HTMLElement;
+        element.addEventListener(event, func);
+      }).Execute();
+    });
+  }
+
   // eslint-disable-next-line complexity
   private static transformJsxToHtml(jsx: Jsx): HTMLElement {
     const dom: HTMLElement = document.createElement(jsx.nodeName);
+
     for (const key in jsx.attributes) {
-      new Command(() => {
+      if (DomEvents.includes(key)) {
+        this.addElementEventListener(key, jsx, dom);
+      } else {
         dom.setAttribute(key, jsx.attributes[key]);
-      }).Execute();
+      }
     }
 
     for (const child of jsx.children) {
