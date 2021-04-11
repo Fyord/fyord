@@ -43,12 +43,10 @@ describe('JsxRenderer', () => {
   });
 
   it('should add event listeners to bound events', async () => {
-    const wrapper = document.createElement('div');
-    document.body.appendChild(wrapper);
     let testVariable = 0;
     const jsxToParse = <button id="test-id" onclick={() => testVariable = 1}></button>;
     const renderedHtml = JsxRenderer.RenderJsx(jsxToParse);
-    wrapper.innerHTML = renderedHtml;
+    document.body.innerHTML = renderedHtml;
 
     const eventProperlyBound = await TestHelpers.TimeLapsedCondition(() => {
       document.getElementById('test-id')?.click();
