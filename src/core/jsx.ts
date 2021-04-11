@@ -27,8 +27,10 @@ export class JsxRenderer {
     element.setAttribute('id', id);
 
     setTimeout(() => {
-      const element = document.getElementById(id) as HTMLElement;
-      element.addEventListener(event, func);
+      new Command(() => {
+        const element = document.getElementById(id) as HTMLElement;
+        element.addEventListener(event, func);
+      }).Execute();
     });
   }
 
@@ -37,13 +39,11 @@ export class JsxRenderer {
     const dom: HTMLElement = document.createElement(jsx.nodeName);
 
     for (const key in jsx.attributes) {
-      new Command(() => {
-        if (DomEvents.includes(key)) {
-          this.addElementEventListener(key, jsx, dom);
-        } else {
-          dom.setAttribute(key, jsx.attributes[key]);
-        }
-      }).Execute();
+      if (DomEvents.includes(key)) {
+        this.addElementEventListener(key, jsx, dom);
+      } else {
+        dom.setAttribute(key, jsx.attributes[key]);
+      }
     }
 
     for (const child of jsx.children) {
