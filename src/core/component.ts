@@ -13,7 +13,6 @@ export type StateFunction<T> = (newValue?: T) => (T | undefined);
 export abstract class Component {
   public static IssuedIds = new Array<string>();
   public State = new EventStore<any>();
-  private routeSubscription: string = Strings.Empty;
   private ids = new Map<string, string>();
 
   /**
@@ -29,23 +28,12 @@ export abstract class Component {
   }
 
   constructor(
-    routeSubscriber = true,
     protected windowDocument: Document = document,
     public App = _App.Instance(),
     private xssSanitizer: IXssSanitizerService = XssSanitizerService.Instance()
   ) {
     this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
-
-    if (routeSubscriber) {
-      this.routeSubscription = App.Router.Route.Subscribe(() => {
-        this.setBehaviorIfComponentIsRendered();
-
-        if (!this.Element) {
-          App.Router.Route.Cancel(this.routeSubscription);
-        }
-      });
-    }
   }
 
   /**
@@ -73,18 +61,12 @@ export abstract class Component {
   public Html: (route?: Route) => Promise<string | Jsx> = async () => Strings.Empty;
 
   /**
-   * Behavior associated with the component - this is where you should attach event handlers
-   */
-  public Behavior: () => void = () => null;
-
-  /**
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior
    * @param route
    */
   public async ReRender(route?: Route): Promise<void> {
     if (this.Element) {
       this.Element.innerHTML = await this.Render(route, false);
-      this.setBehaviorIfComponentIsRendered();
     }
   }
 
@@ -121,17 +103,6 @@ export abstract class Component {
     type input = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
     const inputElement = this.windowDocument.getElementById(inputId) as input;
     return inputElement && inputElement.value ? this.userInput(inputElement.value, allowHtml) : Strings.Empty;
-  }
-
-  /**
-   * Passes the flow of control and runs the behavior method
-   */
-  protected setBehaviorIfComponentIsRendered() {
-    setTimeout(() => {
-      if (this.Element) {
-        this.Behavior();
-      }
-    });
   }
 
   private getOuterHtml(html: string | Jsx): string {

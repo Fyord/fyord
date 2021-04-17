@@ -29,7 +29,7 @@ export abstract class Page extends Component {
     app: App = App.Instance(),
     windowDocument: Document = document
   ) {
-    super(false, windowDocument, app);
+    super(windowDocument, app);
 
     app.Router.Route.Subscribe((route) => {
       this.handleRouteChange(route);
@@ -46,7 +46,6 @@ export abstract class Page extends Component {
       if (!this.Element || pathIsNew) {
         this.boundPath = currentPath;
         this.renderPageInMain(route as Route);
-        this.setBehaviorIfComponentIsRendered();
       }
 
       this.App.Router.RouteHandled = this.Id;

@@ -8,7 +8,6 @@ import { Component } from '../component';
 import { App } from '../app';
 import { EventTypes } from '../eventTypes';
 import { IRouter, Route } from '../services/module';
-import { TestHelpers } from '../../utilities/testHelpers';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 
 class FakeComponent extends Component {
@@ -48,7 +47,7 @@ describe('Component', () => {
     mockComponentState.Setup(s => s.GetStateAt(Strings.Empty), Strings.Empty);
     mockComponentState.Setup(s => s.SetStateAt(Strings.Empty, Strings.Empty));
 
-    classUnderTest = new FakeComponent(true, mockDocument.Object, mockApp.Object);
+    classUnderTest = new FakeComponent(mockDocument.Object, mockApp.Object);
     classUnderTest.SetState(mockComponentState.Object);
   });
 
@@ -80,31 +79,6 @@ describe('Component', () => {
   it('should render without wrapper', async () => {
     const output = await classUnderTest.Render(undefined, false);
     expect(output).toEqual(Strings.Empty);
-  });
-
-  it('should run default (void) behavior after rendering if component is in the dom', async () => {
-    const fakeDiv = document.createElement('div');
-    classUnderTest = new FakeComponent(true, mockDocument.Object, mockApp.Object);
-    mockDocument.Setup(d => d.getElementById(classUnderTest.Id), fakeDiv);
-
-    fakeRoute.Publish();
-    await classUnderTest.Render();
-
-    const renderedComponentQueried = await TestHelpers.TimeLapsedCondition(() =>
-      mockDocument.TimesMemberCalled(d => d.getElementById(classUnderTest.Id)) >= 1);
-    expect(renderedComponentQueried).toBeTruthy();
-  });
-
-  it('should cancel route subscription if component is not rendered', async () => {
-    classUnderTest = new FakeComponent(true, mockDocument.Object, mockApp.Object);
-    mockDocument.Setup(d => d.getElementById(classUnderTest.Id), null);
-
-    fakeRoute.Publish();
-    await classUnderTest.Render();
-
-    const renderedComponentQueried = await TestHelpers.TimeLapsedCondition(() =>
-      mockDocument.TimesMemberCalled(d => d.getElementById(classUnderTest.Id)) >= 1);
-    expect(renderedComponentQueried).toBeTruthy();
   });
 
   it('should re-render the contents of the component when it is rendered', async () => {
