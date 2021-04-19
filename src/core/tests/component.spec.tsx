@@ -6,13 +6,10 @@ import { IEventStore } from 'tsbase/Patterns/EventStore/IEventStore';
 import { ParseJsx } from '../jsx';
 import { Component } from '../component';
 import { App } from '../app';
-import { EventTypes } from '../eventTypes';
 import { IRouter, Route } from '../services/module';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 
 class FakeComponent extends Component {
-  AddEventListenerToId = (id: string, eventType: EventTypes, func: (event: Event | null) => any) => this.addEventListenerToId(
-    id, eventType, func);
   UserInput = (text: string, allowHtml?: boolean) => this.userInput(text, allowHtml);
   GetInputValue = (inputId: string, allowHtml?: boolean) => this.getInputValue(inputId, allowHtml);
   SetState = (state: IEventStore<any>) => this.State = state as EventStore<any>;
@@ -93,15 +90,6 @@ describe('Component', () => {
   it('should not re-render the contents of the component when it is not rendered', async () => {
     mockDocument.Setup(d => d.getElementById(classUnderTest.Id), null);
     await classUnderTest.ReRender();
-  });
-
-  it('should add an event listener to an element with the given id', () => {
-    const fakeButton = document.createElement('button');
-    mockDocument.Setup(d => d.getElementById(''), fakeButton);
-
-    const result = classUnderTest.AddEventListenerToId('', EventTypes.Click, () => null);
-
-    expect(result.IsSuccess).toBeTruthy();
   });
 
   it('should sanitize given user input without html allowed', () => {

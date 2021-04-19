@@ -1,11 +1,8 @@
 import { Strings } from 'tsbase/Functions/Strings';
 import { Guid } from 'tsbase/Functions/Guid';
-import { Result } from 'tsbase/Patterns/Result/Result';
-import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 import { IXssSanitizerService, Route, XssSanitizerService } from './services/module';
 import { App as _App } from './app';
-import { EventTypes } from './eventTypes';
 import { Jsx, JsxRenderer } from './jsx';
 
 export type StateFunction<T> = (newValue?: T) => (T | undefined);
@@ -68,19 +65,6 @@ export abstract class Component {
     if (this.Element) {
       this.Element.innerHTML = await this.Render(route, false);
     }
-  }
-
-  /**
-   * Add a given function as an event to the element with the corresponding id
-   * @param id
-   * @param eventType
-   * @param func
-   */
-  protected addEventListenerToId(id: string, eventType: EventTypes, func: (event: Event | null) => any): Result {
-    return new Command(() => {
-      const element = this.windowDocument.getElementById(id) as HTMLElement;
-      element.addEventListener(eventType, func);
-    }).Execute();
   }
 
   /**
