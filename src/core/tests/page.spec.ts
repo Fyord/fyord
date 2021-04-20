@@ -7,7 +7,7 @@ import { Page } from '../page';
 import { IRouter, ISeoService, Route } from '../services/module';
 
 class FakePage extends Page {
-  Html = async () => 'test';
+  Template = async () => 'test';
   Route = () => this.routeMatches === true;
 
   constructor(

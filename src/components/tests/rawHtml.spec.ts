@@ -10,12 +10,12 @@ describe('RawHtml', () => {
 
   it('should construct with default sanitizing on', async () => {
     expect(classUnderTest).toBeDefined();
-    expect(await classUnderTest.Html()).toEqual('&lt;script&gt;&lt;/script&gt;');
+    expect(await classUnderTest.Template()).toEqual('&lt;script&gt;&lt;/script&gt;');
   });
 
   it('should construct allowing html', async () => {
     classUnderTest = new RawHtml(rawHtmlString, false);
     expect(classUnderTest).toBeDefined();
-    expect(await classUnderTest.Html()).toEqual(rawHtmlString);
+    expect(await classUnderTest.Template()).toEqual(rawHtmlString);
   });
 });

@@ -17,7 +17,7 @@ class FakeComponent extends Component {
 }
 
 class JsxComponent extends Component {
-  Html = async () => <p>test</p>;
+  Template = async () => <p>test</p>;
 }
 
 describe('Component', () => {

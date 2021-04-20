@@ -12,5 +12,5 @@ export class RawHtml extends Component {
     }
   }
 
-  Html = async () => `${this.rawHtml}`;
+  Template = async () => `${this.rawHtml}`;
 }
