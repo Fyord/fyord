@@ -3,12 +3,15 @@ import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Component } from './component';
 import { EventTypes } from './eventTypes';
 import { DomEvents } from './domEvents';
+import { Strings } from 'tsbase/Constants/Strings';
 
 export type Jsx = {
   attributes: Record<string, string>,
   children: Jsx[] | string[],
   nodeName: string
 };
+
+export const Fragment = 'fragment';
 
 export function ParseJsx(nodeName, attributes, ...children): Jsx {
   children = [].concat(...children);
@@ -17,7 +20,9 @@ export function ParseJsx(nodeName, attributes, ...children): Jsx {
 
 export class JsxRenderer {
   public static RenderJsx(jsx: Jsx): string {
-    return JsxRenderer.transformJsxToHtml(jsx).outerHTML;
+    return JsxRenderer.transformJsxToHtml(jsx)
+      .outerHTML
+      .replace(/<(f|.f)ragment>/g, Strings.Empty);
   }
 
   private static addElementEventListener(attribute: string, jsx: Jsx, element: HTMLElement) {

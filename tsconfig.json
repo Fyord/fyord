@@ -2,10 +2,7 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": [
-      "es2015",
-      "dom"
-    ],
+    "lib": ["es2015", "dom"],
     "allowJs": true,
     "sourceMap": false,
     "declaration": true,
@@ -25,17 +22,13 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "node_modules/*"
-      ]
+      "*": ["node_modules/*"]
     },
-    "types": [
-      "jasmine",
-      "node"
-    ],
+    "types": ["jasmine", "node"],
     "jsx": "react",
-    "jsxFactory": "ParseJsx"
+    "jsxFactory": "ParseJsx",
+    "jsxFragmentFactory": "Fragment"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/components/rawHtml.tsx"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

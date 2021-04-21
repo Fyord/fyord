@@ -1,5 +1,5 @@
 import { Component } from '../component';
-import { JsxRenderer, ParseJsx } from '../jsx';
+import { JsxRenderer, ParseJsx, Fragment } from '../jsx';
 import { TestHelpers } from '../../utilities/testHelpers';
 
 describe('JsxRenderer', () => {
@@ -61,5 +61,11 @@ describe('JsxRenderer', () => {
     const jsxToParse = <button onclick={() => true}></button>;
     const renderedHtml = JsxRenderer.RenderJsx(jsxToParse);
     expect(renderedHtml.startsWith('<button id=')).toBeTruthy();
+  });
+
+  it('should parse jsx containing fragments', () => {
+    const jsxToParse = <><p>test</p><p><><span>test</span></></p></>;
+    const expectedOuterHtml = '<p>test</p><p><span>test</span></p>';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
   });
 });
