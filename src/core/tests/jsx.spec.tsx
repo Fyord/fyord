@@ -17,7 +17,7 @@ describe('JsxRenderer', () => {
 
   it('should return the outer html of a parsed jsx node with a nested component', async () => {
     class TestComponent extends Component {
-      Template = async () => 'test';
+      Template = async () => <>test</>;
     }
     const jsxToParse = <div>{await new TestComponent().Render()}</div>;
     expect(JsxRenderer.RenderJsx(jsxToParse)).toContain('<div id="fy-');

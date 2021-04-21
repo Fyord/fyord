@@ -49,13 +49,11 @@ export abstract class Component {
    * @param route
    */
   public async Render(route?: Route, includeWrapper = true): Promise<string> {
-    const html = await this.Template(route);
-    const content = this.getOuterHtml(html);
-
+    const content = this.getOuterHtml(await this.Template(route));
     return includeWrapper ? /*html*/ `<div id="${this.Id}">${content}</div>` : content;
   }
 
-  public Template: (route?: Route) => Promise<string | Jsx> = async () => Strings.Empty;
+  public abstract Template: (route?: Route) => Promise<Jsx>;
 
   /**
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior

@@ -3,13 +3,14 @@ import { Mock } from 'tsmockit';
 import { Strings } from 'tsbase/Functions/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
 import { IEventStore } from 'tsbase/Patterns/EventStore/IEventStore';
-import { ParseJsx } from '../jsx';
+import { ParseJsx, Fragment } from '../jsx';
 import { Component } from '../component';
 import { App } from '../app';
 import { IRouter, Route } from '../services/module';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 
 class FakeComponent extends Component {
+  public Template = async () => <></>;
   UserInput = (text: string, allowHtml?: boolean) => this.userInput(text, allowHtml);
   GetInputValue = (inputId: string, allowHtml?: boolean) => this.getInputValue(inputId, allowHtml);
   SetState = (state: IEventStore<any>) => this.State = state as EventStore<any>;

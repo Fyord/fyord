@@ -1,4 +1,4 @@
-import { Component } from '../core/module';
+import { Component, Jsx } from '../core/module';
 
 export class RawHtml extends Component {
   constructor(
@@ -12,5 +12,5 @@ export class RawHtml extends Component {
     }
   }
 
-  Template = async () => `${this.rawHtml}`;
+  Template = async () => `${this.rawHtml}` as unknown as Jsx;
 }

@@ -29,6 +29,6 @@
     "jsxFactory": "ParseJsx",
     "jsxFragmentFactory": "Fragment"
   },
-  "include": ["src/**/*.ts", "src/components/rawHtml.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -1,8 +1,12 @@
+import { Strings } from 'tsbase/Constants/Strings';
 import { App } from '../../app';
 import { Component } from '../../component';
+import { Jsx } from '../../jsx';
+import { Route } from '../../services/module';
 import { State, AppStore } from '../state';
 
 export class TestComponent extends Component {
+  public Template: (route?: Route) => Promise<Jsx> = async () => (Strings.Empty as any);
   @State public StateTest = 0;
   @AppStore public AppStoreTest?: number;
 }
