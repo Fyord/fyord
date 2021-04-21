@@ -1,9 +1,11 @@
 import { Mock, Times } from 'tsmockit';
 import { Observable } from 'tsbase/Patterns/Observable/module';
+import { LogEntry } from 'tsbase/Utility/Logger/LogEntry';
 import { Environments } from '../environments';
 import { App } from '../app';
 import { IRouter, Route } from '../services/module';
-import { LogEntry } from 'tsbase/Utility/Logger/LogEntry';
+import { ParseJsx, Fragment } from '../jsx';
+import { Strings } from 'tsbase/Functions/Strings';
 
 enum EnvironmentVariables {
   Mode = 'mode',
@@ -93,7 +95,7 @@ describe('App', () => {
     expect(classUnderTest.Store.GetStateAt<string>('test')).toEqual('test');
   });
 
-  async function setupStartedApp(): Promise<Observable<Route>> {
+  async function setupStartedApp(useJsx = true): Promise<Observable<Route>> {
     App.Destroy();
     const fakeRouteObservable = new Observable<Route>();
     const fakeDiv = document.createElement('div');
@@ -107,7 +109,7 @@ describe('App', () => {
       DevelopmentEnvironmentVariables,
       mockRouter.Object,
       mockDocument.Object);
-    const layout = async () => '';
+    const layout = async () => useJsx ? <></> : Strings.Empty as any;
 
     await classUnderTest.Start(layout);
 
@@ -115,7 +117,7 @@ describe('App', () => {
   }
 
   it('should start the application given initial layout', async () => {
-    const fakeRouteObservable = await setupStartedApp();
+    const fakeRouteObservable = await setupStartedApp(false);
 
     fakeRouteObservable.Publish({} as Route);
     mockRouter.Verify(r => r.UseClientRouting(), Times.Once);
@@ -123,10 +125,17 @@ describe('App', () => {
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
   });
 
-  it('should subscribe to layout changes', async () => {
+  it('should subscribe to layout changes with empty string as default', async () => {
     await setupStartedApp();
 
-    classUnderTest.Layout.Publish('');
+    classUnderTest.Layout.Publish();
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
+  });
+
+  it('should subscribe to layout changes with jsx', async () => {
+    await setupStartedApp();
+
+    classUnderTest.Layout.Publish(<><header></header><main></main><footer></footer></>);
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
   });
 

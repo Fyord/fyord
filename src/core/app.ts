@@ -5,6 +5,7 @@ import { Logger } from 'tsbase/Utility/Logger/Logger';
 import { Strings } from 'tsbase/Functions/Strings';
 import { Environments } from './environments';
 import { IRouter, Router } from './services/module';
+import { Jsx, JsxRenderer } from './jsx';
 
 const rootId = 'app-root';
 const defaultAttribute = 'default';
@@ -52,7 +53,7 @@ export class App {
   public EnvironmentVariables = new Map<string, string>();
   public Logger = Logger.Instance;
   public Store = new EventStore<any>();
-  public Layout = new Observable<string>();
+  public Layout = new Observable<Jsx>();
 
   private constructor(
     public Router: IRouter,
@@ -74,11 +75,11 @@ export class App {
     this.Store.SetStateAt<T>(state, Strings.Empty);
   }
 
-  public async Start(initialLayout: () => Promise<string>): Promise<void> {
-    const layout = await initialLayout();
-    const newLayoutElement = (layout: string) => `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${layout}</div>`;
+  public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {
+    const layoutContents = await initialLayout();
+    const layout = typeof layoutContents === 'string' ? layoutContents : JsxRenderer.RenderJsx(layoutContents);
 
-    this.appRoot.innerHTML = newLayoutElement(layout);
+    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${layout}</div>`;
     this.Router.UseClientRouting();
     this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
 
@@ -94,7 +95,7 @@ export class App {
 
   private subscribeToLayoutChanges() {
     this.Layout.Subscribe(layout => {
-      this.setRootElement(rootElementIds.layout, layout || Strings.Empty, false);
+      this.setRootElement(rootElementIds.layout, (layout ? JsxRenderer.RenderJsx(layout) : Strings.Empty), false);
     });
   }
 
@@ -104,8 +105,7 @@ export class App {
       const currentElementIsDefault = rootElement.getAttribute(defaultAttribute) === 'true';
 
       if (rootElement && (!currentElementIsDefault || !defaultElement)) {
-        const contentToAdd = contents;
-        rootElement.innerHTML = contentToAdd;
+        rootElement.innerHTML = contents;
         rootElement.setAttribute(defaultAttribute, defaultElement.toString());
       }
     }).Execute();
