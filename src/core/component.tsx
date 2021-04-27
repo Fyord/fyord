@@ -18,7 +18,7 @@ export abstract class Component {
    */
   public Id: string;
 
-  protected get element(): HTMLElement | null {
+  public get Element(): HTMLElement | null {
     return this.windowDocument.getElementById(this.Id);
   }
 
@@ -57,8 +57,8 @@ export abstract class Component {
    * @param route
    */
   public async ReRender(route?: Route): Promise<void> {
-    if (this.element) {
-      this.element.innerHTML = await this.Render(route, false);
+    if (this.Element) {
+      this.Element.innerHTML = await this.Render(route, false);
     }
   }
 
