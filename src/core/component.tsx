@@ -1,7 +1,8 @@
-import { Strings } from 'tsbase/Functions/Strings';
 import { Guid } from 'tsbase/Functions/Guid';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
-import { IXssSanitizerService, Route, XssSanitizerService } from './services/module';
+import { Result } from 'tsbase/Patterns/Result/Result';
+import { Command } from 'tsbase/Patterns/CommandQuery/Command';
+import { Route } from './services/module';
 import { App as _App } from './app';
 import { Jsx, JsxRenderer } from './jsx';
 
@@ -17,17 +18,13 @@ export abstract class Component {
    */
   public Id: string;
 
-  /**
-   * Returns the rendered html element associated with this component
-   */
-  public get Element(): HTMLElement | null {
+  protected get element(): HTMLElement | null {
     return this.windowDocument.getElementById(this.Id);
   }
 
   constructor(
     protected windowDocument: Document = document,
-    public App = _App.Instance(),
-    private xssSanitizer: IXssSanitizerService = XssSanitizerService.Instance()
+    public App = _App.Instance()
   ) {
     this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
@@ -60,31 +57,18 @@ export abstract class Component {
    * @param route
    */
   public async ReRender(route?: Route): Promise<void> {
-    if (this.Element) {
-      this.Element.innerHTML = await this.Render(route, false);
+    if (this.element) {
+      this.element.innerHTML = await this.Render(route, false);
     }
   }
 
-  /**
-   * Returns a sanitized version of the given text (either plain text or html)
-   * @param text
-   * @param allowHtml
-   */
-  protected userInput(text: string, allowHtml = false): string {
-    return allowHtml ?
-      this.xssSanitizer.Html(text) :
-      this.xssSanitizer.PlainText(text);
-  }
-
-  /**
-   * Gets the value of the input with the given id and returns its sanitized version
-   * @param inputId
-   * @param allowHtml
-   */
-  protected getInputValue(inputId: string, allowHtml = false): string {
-    type input = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-    const inputElement = this.windowDocument.getElementById(inputId) as input;
-    return inputElement && inputElement.value ? this.userInput(inputElement.value, allowHtml) : Strings.Empty;
+  protected asap(func: () => void): Result {
+    return new Command(() => {
+      setTimeout(() => {
+        func();
+      });
+    }
+    ).Execute();
   }
 
   private getOuterHtml(html: string | Jsx): string {

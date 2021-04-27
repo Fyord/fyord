@@ -43,7 +43,7 @@ export abstract class Page extends Component {
       const currentPath = (route as Route).path;
       const pathIsNew = currentPath !== this.boundPath;
 
-      if (!this.Element || pathIsNew) {
+      if (!this.element || pathIsNew) {
         this.boundPath = currentPath;
         this.renderPageInMain(route as Route);
       }
