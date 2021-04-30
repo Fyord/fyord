@@ -5,6 +5,7 @@ import { TestHelpers } from '../../../utilities/testHelpers';
 import { Route } from './route';
 import { IRouter, Router } from './router';
 import { EventTypes } from '../../eventTypes';
+import { Asap } from '../../../utilities/asap';
 
 describe('Router', () => {
   let classUnderTest: IRouter;
@@ -121,7 +122,7 @@ describe('Router', () => {
     classUnderTest.UseClientRouting();
     classUnderTest.Route.Publish(route);
 
-    setTimeout(() => {
+    Asap(() => {
       TestHelpers.EmitEventAtElement(routedElement, EventTypes.Click);
       TestHelpers.EmitEventAtElement(currentPageElement, EventTypes.Click);
       TestHelpers.EmitEventAtElement(targetBlankElement, EventTypes.Click);

@@ -4,6 +4,7 @@ import { Component } from './component';
 import { EventTypes } from './eventTypes';
 import { DomEvents } from './domEvents';
 import { Strings } from 'tsbase/Constants/Strings';
+import { Asap } from '../utilities/asap';
 
 export type Jsx = {
   attributes: Record<string, string>,
@@ -31,7 +32,7 @@ export class JsxRenderer {
     const id = element.attributes['id'] ? element.attributes['id'].nodeValue : Guid.NewGuid();
     element.setAttribute('id', id);
 
-    setTimeout(() => {
+    Asap(() => {
       new Command(() => {
         const element = document.getElementById(id) as HTMLElement;
         element.addEventListener(event, func);

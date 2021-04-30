@@ -1,5 +1,6 @@
 import { Strings } from 'tsbase/Functions/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
+import { Asap } from '../../../utilities/asap';
 import { IXssSanitizerService, XssSanitizerService } from '../xssSanitizerService/xssSanitizerService';
 import { Route } from './route';
 
@@ -70,7 +71,7 @@ export class Router implements IRouter {
   }
 
   private passFlowOfControlAndUpdateRenderedAnchorTags(): void {
-    setTimeout(() => {
+    Asap(() => {
       const anchorTags = this.mainWindow.document.querySelectorAll('a') as NodeListOf<HTMLAnchorElement>;
 
       anchorTags.forEach(element => {
