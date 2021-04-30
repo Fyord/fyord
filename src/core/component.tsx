@@ -62,15 +62,6 @@ export abstract class Component {
     }
   }
 
-  protected asap(func: () => void): Result {
-    return new Command(() => {
-      setTimeout(() => {
-        func();
-      });
-    }
-    ).Execute();
-  }
-
   private getOuterHtml(html: string | Jsx): string {
     if (typeof html === 'string') {
       return html;

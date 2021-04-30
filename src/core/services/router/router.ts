@@ -8,6 +8,7 @@ export interface IRouter {
   RouteHandled: string;
   CurrentRoute?: Route;
   UseClientRouting(): void;
+  RouteTo(href: string, push?: boolean): Route;
   GetRouteFromHref(href: string): Route;
 }
 
@@ -41,8 +42,19 @@ export class Router implements IRouter {
     });
 
     window.onpopstate = (() => {
-      this.routeTo(this.mainWindow.location.href);
+      this.RouteTo(this.mainWindow.location.href);
     });
+  }
+
+  public RouteTo(href: string, push = true): Route {
+    const route = this.GetRouteFromHref(href);
+    this.Route.Publish(route);
+
+    if (push) {
+      this.mainWindow.history.pushState(route, href, href);
+    }
+
+    return route;
   }
 
   public GetRouteFromHref(href: string): Route {
@@ -78,17 +90,9 @@ export class Router implements IRouter {
       event.preventDefault();
 
       if (href !== this.mainWindow.location.href) {
-        const route = this.routeTo(href);
-        this.mainWindow.history.pushState(route, href, href);
+        this.RouteTo(href);
       }
     }
-  }
-
-  private routeTo(href: string): Route {
-    const route = this.GetRouteFromHref(href);
-    this.Route.Publish(route);
-
-    return route;
   }
 
   private getCleanRoute(href: string): string {

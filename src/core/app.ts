@@ -34,7 +34,7 @@ export class App {
 
     return this.instance;
   }
-  public static Destroy = () => {
+  public static Destroy(): void {
     if (App.loggerSubscription) {
       Logger.Instance.EntryLogged.Cancel(App.loggerSubscription);
     }
