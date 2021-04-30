@@ -1,4 +1,4 @@
-import { Mock } from 'tsmockit';
+import { Mock, Times } from 'tsmockit';
 import { Strings } from 'tsbase/Functions/Strings';
 import { IXssSanitizerService } from '../xssSanitizerService/xssSanitizerService';
 import { TestHelpers } from '../../../utilities/testHelpers';
@@ -29,6 +29,7 @@ describe('Router', () => {
     mockWindow.Setup(w => w.location, mockLocation.Object);
     mockWindow.Setup(w => w.document, mockDocument.Object);
     mockWindow.Setup(w => w.history, mockHistory.Object);
+    mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
 
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
   });
@@ -45,14 +46,27 @@ describe('Router', () => {
     expect(classUnderTest['RouteHandled']).toEqual(Strings.Empty);
   });
 
-  it('should get route from href with route params', () => {
+  it('should get route to href with route params', () => {
     const href = `${host}/one/two/`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.GetRouteFromHref(href);
+    const route = classUnderTest.RouteTo(href);
 
+    expect(route.routeParams.length).toEqual(2);
+  });
+
+  it('should get route to href with route params without pushing to history api', () => {
+    mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
+    const href = `${host}/one/two/`;
+    mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
+    mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
+    classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
+
+    const route = classUnderTest.RouteTo(href, false);
+
+    expect(mockHistory.Verify(h => h.pushState({}, Strings.Empty, Strings.Empty), Times.Never));
     expect(route.routeParams.length).toEqual(2);
   });
 
@@ -62,7 +76,7 @@ describe('Router', () => {
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.GetRouteFromHref(href);
+    const route = classUnderTest.RouteTo(href);
 
     expect(route.hashParams.length).toEqual(2);
   });
@@ -73,7 +87,7 @@ describe('Router', () => {
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.GetRouteFromHref(href);
+    const route = classUnderTest.RouteTo(href);
 
     expect(route.queryParams.size).toEqual(2);
   });
@@ -83,7 +97,7 @@ describe('Router', () => {
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.GetRouteFromHref(href);
+    const route = classUnderTest.RouteTo(href);
 
     expect(route.queryParams.size).toEqual(1);
   });
@@ -113,13 +127,13 @@ describe('Router', () => {
       TestHelpers.EmitEventAtElement(targetBlankElement, EventTypes.Click);
     });
 
-    classUnderTest['routeTo']('/test');
+    classUnderTest.RouteTo('/test');
     history.pushState({}, 'test', 'test');
     history.back();
 
     const routingAssertionsMet = await TestHelpers.TimeLapsedCondition(() => {
       return routedElement.getAttribute('routed') !== null &&
-        mockHistory.TimesMemberCalled(h => h.pushState({}, Strings.Empty, Strings.Empty)) === 1;
+        mockHistory.TimesMemberCalled(h => h.pushState({}, Strings.Empty, Strings.Empty)) >= 1;
     });
 
     expect(routingAssertionsMet).toBeTruthy();

@@ -11,8 +11,6 @@ import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 
 class FakeComponent extends Component {
   public Template = async () => <></>;
-  UserInput = (text: string, allowHtml?: boolean) => this.userInput(text, allowHtml);
-  GetInputValue = (inputId: string, allowHtml?: boolean) => this.getInputValue(inputId, allowHtml);
   SetState = (state: IEventStore<any>) => this.State = state as EventStore<any>;
   SetStateAt = (value: any, path: string) => this.State.SetStateAt(value, path);
 }
@@ -91,41 +89,6 @@ describe('Component', () => {
   it('should not re-render the contents of the component when it is not rendered', async () => {
     mockDocument.Setup(d => d.getElementById(classUnderTest.Id), null);
     await classUnderTest.ReRender();
-  });
-
-  it('should sanitize given user input without html allowed', () => {
-    const attackString = '<img src="fake" onerror="alert(1)">';
-    expect(classUnderTest.UserInput(attackString)).toEqual(Strings.Empty);
-  });
-
-  it('should sanitize given user input with html allowed', () => {
-    const attackString = '<img src="fake" onerror="alert(1)">';
-    const expected = '<img src>';
-    expect(classUnderTest.UserInput(attackString, true)).toEqual(expected);
-  });
-
-  it('should get input value and sanitize without html allowed', () => {
-    const attackString = '<img src="fake" onerror="alert(1)">';
-    const fakeInput = document.createElement('input');
-    fakeInput.value = attackString;
-    mockDocument.Setup(d => d.getElementById(''), fakeInput);
-
-    expect(classUnderTest.GetInputValue('')).toEqual(Strings.Empty);
-  });
-
-  it('should get input value and sanitize with html allowed', () => {
-    const attackString = '<img src="fake" onerror="alert(1)">';
-    const fakeInput = document.createElement('input');
-    fakeInput.value = attackString;
-    mockDocument.Setup(d => d.getElementById(''), fakeInput);
-    const expected = '<img src>';
-
-    expect(classUnderTest.GetInputValue('', true)).toEqual(expected);
-  });
-
-  it('should return an empty string for input value when input does not exist', () => {
-    mockDocument.Setup(d => d.getElementById(''), null);
-    expect(classUnderTest.GetInputValue('', true)).toEqual(Strings.Empty);
   });
 
   it('should return its own rendered element', () => {

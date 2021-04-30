@@ -102,6 +102,7 @@ describe('App', () => {
     mockDocument.Setup(d => d.getElementById('app-root-layout'), fakeDiv);
     mockRouter.Setup(r => r.UseClientRouting());
     mockRouter.Setup(r => r.GetRouteFromHref(''), {} as Route);
+    mockRouter.Setup(r => r.RouteTo(''), {} as Route);
     mockRouter.Setup(r => r.Route, fakeRouteObservable);
     classUnderTest = App.Instance(
       Environments.Production,
