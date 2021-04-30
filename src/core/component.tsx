@@ -1,7 +1,5 @@
 import { Guid } from 'tsbase/Functions/Guid';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
-import { Result } from 'tsbase/Patterns/Result/Result';
-import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Route } from './services/module';
 import { App as _App } from './app';
 import { Jsx, JsxRenderer } from './jsx';
