@@ -80,7 +80,6 @@ export class App {
     const layout = typeof layoutContents === 'string' ? layoutContents : JsxRenderer.RenderJsx(layoutContents);
 
     this.appRoot.innerHTML = `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${layout}</div>`;
-    this.Router.UseClientRouting();
     this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
 
     this.restoreDefaultLayoutOnRoute(layout);

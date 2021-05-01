@@ -63,6 +63,7 @@ export abstract class Component {
       newElement.innerHTML = newRender;
 
       RecursiveReRender(this.Element, newElement);
+      this.App.Router.UseClientRouting();
     }
   }
 
