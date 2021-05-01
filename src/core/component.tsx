@@ -1,8 +1,9 @@
 import { Guid } from 'tsbase/Functions/Guid';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
-import { Route } from './services/module';
+import { Route } from './services/router/route';
 import { App as _App } from './app';
 import { Jsx, JsxRenderer } from './jsx';
+import { RecursiveReRender } from '../utilities/recursiveReRender';
 
 export type StateFunction<T> = (newValue?: T) => (T | undefined);
 
@@ -56,7 +57,12 @@ export abstract class Component {
    */
   public async ReRender(route?: Route): Promise<void> {
     if (this.Element) {
-      this.Element.innerHTML = await this.Render(route, false);
+      const newRender = await this.Render(route, false);
+
+      const newElement = document.createElement('div');
+      newElement.innerHTML = newRender;
+
+      RecursiveReRender(this.Element, newElement);
     }
   }
 
