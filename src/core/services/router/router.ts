@@ -34,16 +34,28 @@ export class Router implements IRouter {
     private mainWindow: Window,
     private xssSanitizer: IXssSanitizerService
   ) {
-    this.Route.Subscribe(() => this.RouteHandled = Strings.Empty);
-  }
-
-  public UseClientRouting(): void {
     this.Route.Subscribe(() => {
-      this.passFlowOfControlAndUpdateRenderedAnchorTags();
+      this.RouteHandled = Strings.Empty;
+      this.UseClientRouting();
     });
 
     window.onpopstate = (() => {
       this.RouteTo(this.mainWindow.location.href);
+    });
+  }
+
+  public UseClientRouting(): void {
+    Asap(() => {
+      const anchorTags = this.mainWindow.document.querySelectorAll('a') as NodeListOf<HTMLAnchorElement>;
+
+      anchorTags.forEach(element => {
+        const routeAttribute = 'routed';
+
+        if (!element.getAttribute(routeAttribute)) {
+          element.setAttribute(routeAttribute, (true).toString());
+          element.addEventListener('click', (e) => this.routeWithHistoryApi(e, element.href, element.target));
+        }
+      });
     });
   }
 
@@ -68,21 +80,6 @@ export class Router implements IRouter {
       queryParams: this.getQueryParams(href),
       hashParams: this.getHashParams(href)
     } as Route;
-  }
-
-  private passFlowOfControlAndUpdateRenderedAnchorTags(): void {
-    Asap(() => {
-      const anchorTags = this.mainWindow.document.querySelectorAll('a') as NodeListOf<HTMLAnchorElement>;
-
-      anchorTags.forEach(element => {
-        const routeAttribute = 'routed';
-
-        if (!element.getAttribute(routeAttribute)) {
-          element.setAttribute(routeAttribute, (true).toString());
-          element.addEventListener('click', (e) => this.routeWithHistoryApi(e, element.href, element.target));
-        }
-      });
-    });
   }
 
   private routeWithHistoryApi(event: Event, href: string, target: string): void {

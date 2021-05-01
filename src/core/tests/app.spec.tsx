@@ -121,7 +121,6 @@ describe('App', () => {
     const fakeRouteObservable = await setupStartedApp(false);
 
     fakeRouteObservable.Publish({} as Route);
-    mockRouter.Verify(r => r.UseClientRouting(), Times.Once);
     mockRouter.Verify(r => r.GetRouteFromHref(''), Times.Once);
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
   });
