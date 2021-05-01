@@ -3,9 +3,9 @@
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Result } from 'tsbase/Patterns/Result/Result';
 
-export function RecursiveReRender(oldElement: Element, newElement: Element): Result {
+export function RecursiveReRender(oldElement: Element, newElement: Element, root = true): Result {
   return new Command(() => {
-    const contentHasChanged = newElement.innerHTML !== oldElement.innerHTML;
+    const contentHasChanged = newElement.outerHTML !== oldElement.outerHTML;
 
     if (contentHasChanged) {
       const shouldConsiderChildren = newElement.children.length > 0 && oldElement.children.length === newElement.children.length;
@@ -16,20 +16,22 @@ export function RecursiveReRender(oldElement: Element, newElement: Element): Res
           updateChildrenWhenCompatible(oldElement, newElement, index);
         }
       } else {
-        oldElement.innerHTML = newElement.innerHTML;
+        root ?
+          oldElement.innerHTML = newElement.innerHTML :
+          oldElement.outerHTML = newElement.outerHTML;
       }
     }
   }).Execute();
 }
 
-function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, index: number) {
+function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, index: number): void {
   const oldChild = oldElement.children[index];
   const newChild = newElement.children[index];
 
   const childrenCompatible = oldChild && newChild && oldChild.tagName === newChild.tagName;
 
   if (childrenCompatible) {
-    RecursiveReRender(oldChild, newChild);
+    RecursiveReRender(oldChild, newChild, false);
   } else {
     oldElement.innerHTML = newElement.innerHTML;
   }

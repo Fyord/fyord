@@ -33,6 +33,7 @@ describe('Component', () => {
   beforeEach(() => {
     mockDocument.Setup(d => d.getElementById(Strings.Empty), null);
     mockRouter.Setup(r => r.Route, fakeRoute);
+    mockRouter.Setup(r => r.UseClientRouting());
     mockApp.Setup(a => a.Router, mockRouter.Object);
     mockApp.Setup(a => a.Store, mockEventStore.Object);
     mockEventStore.Setup(s => s.ObservableAt(Strings.Empty), fakeStateObservable);

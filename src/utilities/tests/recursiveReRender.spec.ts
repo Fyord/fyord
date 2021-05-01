@@ -59,4 +59,14 @@ describe('RecursiveReRender', () => {
     expect(result.IsSuccess).toBeTruthy();
     expect(oldElement.innerHTML).toEqual('<div>two</div>');
   });
+
+  it('should replace the outer html, including attributes, for rendered children', () => {
+    oldElement.innerHTML = '<div class="one">one</div>';
+    newElement.innerHTML = '<div class="two">one</div>';
+
+    const result = RecursiveReRender(oldElement, newElement);
+
+    expect(result.IsSuccess).toBeTruthy();
+    expect(oldElement.innerHTML).toEqual('<div class="two">one</div>');
+  });
 });
