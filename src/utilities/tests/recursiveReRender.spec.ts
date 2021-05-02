@@ -60,13 +60,33 @@ describe('RecursiveReRender', () => {
     expect(oldElement.innerHTML).toEqual('<div>two</div>');
   });
 
-  it('should replace the outer html, including attributes, for rendered children', () => {
+  it('should update attributes, for rendered children', () => {
     oldElement.innerHTML = '<div class="one">one</div>';
-    newElement.innerHTML = '<div class="two">one</div>';
+    newElement.innerHTML = '<div class="one two">one</div>';
 
     const result = RecursiveReRender(oldElement, newElement);
 
     expect(result.IsSuccess).toBeTruthy();
-    expect(oldElement.innerHTML).toEqual('<div class="two">one</div>');
+    expect(oldElement.innerHTML).toEqual('<div class="one two">one</div>');
+  });
+
+  it('should not update attributes in the no update list (ex: id) for rendered children', () => {
+    oldElement.innerHTML = '<div class="one" id="one">one</div>';
+    newElement.innerHTML = '<div class="one two" id="two">one</div>';
+
+    const result = RecursiveReRender(oldElement, newElement);
+
+    expect(result.IsSuccess).toBeTruthy();
+    expect(oldElement.innerHTML).toEqual('<div class="one two" id="one">one</div>');
+  });
+
+  it('should remove attributes that are no longer set', () => {
+    oldElement.innerHTML = '<div id="one" class="one">one</div>';
+    newElement.innerHTML = '<div>two</div>';
+
+    const result = RecursiveReRender(oldElement, newElement);
+
+    expect(result.IsSuccess).toBeTruthy();
+    expect(oldElement.innerHTML).toEqual('<div id="one">two</div>');
   });
 });
