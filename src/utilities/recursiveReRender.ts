@@ -1,9 +1,13 @@
 // intentionally not included in ./module
+/* eslint-disable no-use-before-define */
+
 
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Result } from 'tsbase/Patterns/Result/Result';
 
-export function RecursiveReRender(oldElement: Element, newElement: Element, root = true): Result {
+const noChangeAttributes = ['id', 'value'];
+
+export function RecursiveReRender(oldElement: Element, newElement: Element): Result {
   return new Command(() => {
     const contentHasChanged = newElement.outerHTML !== oldElement.outerHTML;
 
@@ -12,16 +16,28 @@ export function RecursiveReRender(oldElement: Element, newElement: Element, root
 
       if (shouldConsiderChildren) {
         for (let index = 0; index < newElement.children.length; index++) {
-          // eslint-disable-next-line no-use-before-define
           updateChildrenWhenCompatible(oldElement, newElement, index);
         }
       } else {
-        root ?
-          oldElement.innerHTML = newElement.innerHTML :
-          oldElement.outerHTML = newElement.outerHTML;
+        oldElement.innerHTML = newElement.innerHTML;
+        updateAttributes();
+        removeDeletedAttributes();
       }
     }
   }).Execute();
+
+  function updateAttributes() {
+    Array.from(newElement.attributes).filter(a => !noChangeAttributes.includes(a.name)).forEach(newAttribute => {
+      oldElement.setAttribute(newAttribute.name, newAttribute.value);
+    });
+  }
+
+  function removeDeletedAttributes() {
+    Array.from(oldElement.attributes).filter(
+      a => !noChangeAttributes.includes(a.name) &&
+        !newElement.hasAttribute(a.name))
+      .forEach(removedAttribute => oldElement.removeAttribute(removedAttribute.name));
+  }
 }
 
 function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, index: number): void {
@@ -31,7 +47,7 @@ function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, 
   const childrenCompatible = oldChild && newChild && oldChild.tagName === newChild.tagName;
 
   if (childrenCompatible) {
-    RecursiveReRender(oldChild, newChild, false);
+    RecursiveReRender(oldChild, newChild);
   } else {
     oldElement.innerHTML = newElement.innerHTML;
   }
