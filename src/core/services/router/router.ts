@@ -46,15 +46,14 @@ export class Router implements IRouter {
 
   public UseClientRouting(): void {
     Asap(() => {
-      const anchorTags = this.mainWindow.document.querySelectorAll('a') as NodeListOf<HTMLAnchorElement>;
+      const routeAttribute = 'routed';
+      const anchorTags = this.mainWindow.document.querySelectorAll(
+        `a:not([${routeAttribute}="true"]):not([target="_blank"])`) as NodeListOf<HTMLAnchorElement>;
 
       anchorTags.forEach(element => {
-        const routeAttribute = 'routed';
 
-        if (!element.getAttribute(routeAttribute)) {
-          element.setAttribute(routeAttribute, (true).toString());
-          element.addEventListener('click', (e) => this.routeWithHistoryApi(e, element.href, element.target));
-        }
+        element.setAttribute(routeAttribute, (true).toString());
+        element.addEventListener('click', (e) => this.routeWithHistoryApi(e, element.href));
       });
     });
   }
@@ -82,9 +81,9 @@ export class Router implements IRouter {
     } as Route;
   }
 
-  private routeWithHistoryApi(event: Event, href: string, target: string): void {
+  private routeWithHistoryApi(event: Event, href: string): void {
     const isLocal = href.startsWith(this.mainWindow.location.origin);
-    if (isLocal && target !== '_blank') {
+    if (isLocal) {
       event.preventDefault();
 
       if (href !== this.mainWindow.location.href) {
