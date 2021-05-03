@@ -1,7 +1,6 @@
 // intentionally not included in ./module
 /* eslint-disable no-use-before-define */
 
-
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Result } from 'tsbase/Patterns/Result/Result';
 
@@ -19,25 +18,10 @@ export function RecursiveReRender(oldElement: Element, newElement: Element): Res
           updateChildrenWhenCompatible(oldElement, newElement, index);
         }
       } else {
-        oldElement.innerHTML = newElement.innerHTML;
-        updateAttributes();
-        removeDeletedAttributes();
+        updateElement(oldElement, newElement);
       }
     }
   }).Execute();
-
-  function updateAttributes() {
-    Array.from(newElement.attributes).filter(a => !noChangeAttributes.includes(a.name)).forEach(newAttribute => {
-      oldElement.setAttribute(newAttribute.name, newAttribute.value);
-    });
-  }
-
-  function removeDeletedAttributes() {
-    Array.from(oldElement.attributes).filter(
-      a => !noChangeAttributes.includes(a.name) &&
-        !newElement.hasAttribute(a.name))
-      .forEach(removedAttribute => oldElement.removeAttribute(removedAttribute.name));
-  }
 }
 
 function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, index: number): void {
@@ -47,8 +31,29 @@ function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, 
   const childrenCompatible = oldChild && newChild && oldChild.tagName === newChild.tagName;
 
   if (childrenCompatible) {
+    updateAttributes(oldElement, newElement);
+    removeDeletedAttributes(oldElement, newElement);
     RecursiveReRender(oldChild, newChild);
   } else {
-    oldElement.innerHTML = newElement.innerHTML;
+    updateElement(oldElement, newElement);
   }
+}
+
+function updateElement(oldElement: Element, newElement: Element): void {
+  oldElement.innerHTML = newElement.innerHTML;
+  updateAttributes(oldElement, newElement);
+  removeDeletedAttributes(oldElement, newElement);
+}
+
+function updateAttributes(oldElement: Element, newElement: Element): void {
+  Array.from(newElement.attributes).filter(a => !noChangeAttributes.includes(a.name)).forEach(newAttribute => {
+    oldElement.setAttribute(newAttribute.name, newAttribute.value);
+  });
+}
+
+function removeDeletedAttributes(oldElement: Element, newElement: Element): void {
+  Array.from(oldElement.attributes).filter(
+    a => !noChangeAttributes.includes(a.name) &&
+      !newElement.hasAttribute(a.name))
+    .forEach(removedAttribute => oldElement.removeAttribute(removedAttribute.name));
 }
