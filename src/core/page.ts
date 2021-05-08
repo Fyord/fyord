@@ -59,6 +59,7 @@ export abstract class Page extends Component {
     const markup = await this.Render(route);
     if (this.App.Router.RouteHandled === this.Id) {
       this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
+      this.App.Router.UseClientRouting();
     }
   }
 }

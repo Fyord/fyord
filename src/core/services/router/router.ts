@@ -36,7 +36,6 @@ export class Router implements IRouter {
   ) {
     this.Route.Subscribe(() => {
       this.RouteHandled = Strings.Empty;
-      this.UseClientRouting();
     });
 
     window.onpopstate = (() => {
