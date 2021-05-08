@@ -18,7 +18,7 @@ export abstract class Page extends Component {
   /**
    * Sets the predicate by which a route match is determined
    */
-  public abstract Route: (route: Route) => boolean;
+  public abstract Route: (route: Route) => Promise<boolean>;
   public Title: string = Strings.Empty;
   public Description: string = Strings.Empty;
   public ImageUrl: string = Strings.Empty;
@@ -31,24 +31,27 @@ export abstract class Page extends Component {
   ) {
     super(windowDocument, app);
 
-    app.Router.Route.Subscribe((route) => {
-      this.handleRouteChange(route);
+    app.Router.Route.Subscribe(async (route) => {
+      await this.handleRouteChange(route);
     });
   }
 
-  private routeMatch = (route: Route | undefined) => !this.App.Router.RouteHandled && route && this.Route(route);
+  private routeMatch = async (route: Route | undefined) =>
+    !this.App.Router.RouteHandled &&
+    route &&
+    await this.Route(route);
 
-  private handleRouteChange(route: Route | undefined): void {
-    if (this.routeMatch(route)) {
+  private async handleRouteChange(route: Route | undefined): Promise<void> {
+    if (await this.routeMatch(route)) {
       const currentPath = (route as Route).path;
       const pathIsNew = currentPath !== this.boundPath;
 
       if (!this.Element || pathIsNew) {
         this.boundPath = currentPath;
-        this.renderPageInMain(route as Route);
+        this.App.Router.RouteHandled = this.Id;
+        await this.renderPageInMain(route as Route);
       }
 
-      this.App.Router.RouteHandled = this.Id;
     } else {
       this.boundPath = Strings.Empty;
     }
@@ -57,9 +60,7 @@ export abstract class Page extends Component {
   private async renderPageInMain(route: Route) {
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
     const markup = await this.Render(route);
-    if (this.App.Router.RouteHandled === this.Id) {
-      this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
-      this.App.Router.UseClientRouting();
-    }
+    this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
+    this.App.Router.UseClientRouting();
   }
 }

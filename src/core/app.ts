@@ -80,14 +80,14 @@ export class App {
     const layout = typeof layoutContents === 'string' ? layoutContents : JsxRenderer.RenderJsx(layoutContents);
 
     this.appRoot.innerHTML = `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${layout}</div>`;
-    this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
+    await this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
 
     this.restoreDefaultLayoutOnRoute(layout);
     this.subscribeToLayoutChanges();
   }
 
   private restoreDefaultLayoutOnRoute(layout: string) {
-    this.Router.Route.Subscribe(() => {
+    this.Router.Route.Subscribe(async () => {
       this.setRootElement(rootElementIds.layout, layout || Strings.Empty, true);
     });
   }

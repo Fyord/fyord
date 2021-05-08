@@ -39,66 +39,66 @@ describe('Router', () => {
     expect(classUnderTest).toBeDefined();
   });
 
-  it('should clear handled route on route change', () => {
+  it('should clear handled route on route change', async () => {
     classUnderTest['RouteHandled'] = '123';
 
-    classUnderTest.Route.Publish(route);
+    await classUnderTest.Route.Publish(route);
 
     expect(classUnderTest['RouteHandled']).toEqual(Strings.Empty);
   });
 
-  it('should get route to href with route params', () => {
+  it('should get route to href with route params', async () => {
     const href = `${host}/one/two/`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.RouteTo(href);
+    const route = await classUnderTest.RouteTo(href);
 
     expect(route.routeParams.length).toEqual(2);
   });
 
-  it('should get route to href with route params without pushing to history api', () => {
+  it('should get route to href with route params without pushing to history api', async () => {
     mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
     const href = `${host}/one/two/`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.RouteTo(href, false);
+    const route = await classUnderTest.RouteTo(href, false);
 
     expect(mockHistory.Verify(h => h.pushState({}, Strings.Empty, Strings.Empty), Times.Never));
     expect(route.routeParams.length).toEqual(2);
   });
 
-  it('should get route from href with hash params', () => {
+  it('should get route from href with hash params', async () => {
     const href = `${host}#one#two`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.RouteTo(href);
+    const route = await classUnderTest.RouteTo(href);
 
     expect(route.hashParams.length).toEqual(2);
   });
 
-  it('should get route from href with query params', () => {
+  it('should get route from href with query params', async () => {
     const href = `${host}?one=one&two=two`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.RouteTo(href);
+    const route = await classUnderTest.RouteTo(href);
 
     expect(route.queryParams.size).toEqual(2);
   });
 
-  it('should get route from href with a single query param', () => {
+  it('should get route from href with a single query param', async () => {
     const href = `${host}?one=one`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
-    const route = classUnderTest.RouteTo(href);
+    const route = await classUnderTest.RouteTo(href);
 
     expect(route.queryParams.size).toEqual(1);
   });
@@ -120,7 +120,7 @@ describe('Router', () => {
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
     classUnderTest.UseClientRouting();
-    classUnderTest.Route.Publish(route);
+    await classUnderTest.Route.Publish(route);
 
     Asap(() => {
       TestHelpers.EmitEventAtElement(routedElement, EventTypes.Click);
@@ -128,7 +128,7 @@ describe('Router', () => {
       TestHelpers.EmitEventAtElement(targetBlankElement, EventTypes.Click);
     });
 
-    classUnderTest.RouteTo('/test');
+    await classUnderTest.RouteTo('/test');
     history.pushState({}, 'test', 'test');
     history.back();
 

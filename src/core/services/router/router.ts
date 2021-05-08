@@ -1,15 +1,15 @@
 import { Strings } from 'tsbase/Functions/Strings';
-import { Observable } from 'tsbase/Patterns/Observable/Observable';
+import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
 import { Asap } from '../../../utilities/asap';
 import { IXssSanitizerService, XssSanitizerService } from '../xssSanitizerService/xssSanitizerService';
 import { Route } from './route';
 
 export interface IRouter {
-  Route: Observable<Route>;
+  Route: AsyncObservable<Route>;
   RouteHandled: string;
   CurrentRoute?: Route;
   UseClientRouting(): void;
-  RouteTo(href: string, push?: boolean): Route;
+  RouteTo(href: string, push?: boolean): Promise<Route>;
   GetRouteFromHref(href: string): Route;
 }
 
@@ -26,7 +26,7 @@ export class Router implements IRouter {
   }
   public static Destroy = () => Router.instance = null;
 
-  public Route = new Observable<Route>();
+  public Route = new AsyncObservable<Route>();
   public RouteHandled = Strings.Empty;
   public CurrentRoute?: Route;
 
@@ -34,12 +34,12 @@ export class Router implements IRouter {
     private mainWindow: Window,
     private xssSanitizer: IXssSanitizerService
   ) {
-    this.Route.Subscribe(() => {
+    this.Route.Subscribe(async () => {
       this.RouteHandled = Strings.Empty;
     });
 
-    window.onpopstate = (() => {
-      this.RouteTo(this.mainWindow.location.href);
+    window.onpopstate = (async () => {
+      await this.RouteTo(this.mainWindow.location.href, false);
     });
   }
 
@@ -57,9 +57,9 @@ export class Router implements IRouter {
     });
   }
 
-  public RouteTo(href: string, push = true): Route {
+  public async RouteTo(href: string, push = true): Promise<Route> {
     const route = this.GetRouteFromHref(href);
-    this.Route.Publish(route);
+    await this.Route.Publish(route);
 
     if (push) {
       this.mainWindow.history.pushState(route, href, href);
@@ -80,13 +80,13 @@ export class Router implements IRouter {
     } as Route;
   }
 
-  private routeWithHistoryApi(event: Event, href: string): void {
+  private async routeWithHistoryApi(event: Event, href: string): Promise<void> {
     const isLocal = href.startsWith(this.mainWindow.location.origin);
     if (isLocal) {
       event.preventDefault();
 
       if (href !== this.mainWindow.location.href) {
-        this.RouteTo(href);
+        await this.RouteTo(href);
       }
     }
   }
