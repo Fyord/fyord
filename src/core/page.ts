@@ -22,7 +22,7 @@ export abstract class Page extends Component {
   public Title: string = Strings.Empty;
   public Description: string = Strings.Empty;
   public ImageUrl: string = Strings.Empty;
-  private boundPath = Strings.Empty;
+  private boundHref = Strings.Empty;
 
   constructor(
     protected seoService: ISeoService = SeoService.Instance,
@@ -43,17 +43,17 @@ export abstract class Page extends Component {
 
   private async handleRouteChange(route: Route | undefined): Promise<void> {
     if (await this.routeMatch(route)) {
-      const currentPath = (route as Route).path;
-      const pathIsNew = currentPath !== this.boundPath;
+      const currentHref = (route as Route).href;
+      const hrefIsNew = currentHref !== this.boundHref;
 
-      if (!this.Element || pathIsNew) {
-        this.boundPath = currentPath;
+      if (!this.Element || hrefIsNew) {
+        this.boundHref = currentHref;
         this.App.Router.RouteHandled = this.Id;
         await this.renderPageInMain(route as Route);
       }
 
     } else {
-      this.boundPath = Strings.Empty;
+      this.boundHref = Strings.Empty;
     }
   }
 
