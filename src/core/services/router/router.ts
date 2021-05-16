@@ -92,7 +92,7 @@ export class Router implements IRouter {
   }
 
   private getCleanRoute(href: string): string {
-    const route = href.includes(location.origin) ? 
+    const route = href.includes(location.origin) ?
       href.split(this.mainWindow.location.origin)[1] :
       href;
 
