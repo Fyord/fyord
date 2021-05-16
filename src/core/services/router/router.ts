@@ -92,20 +92,18 @@ export class Router implements IRouter {
   }
 
   private getCleanRoute(href: string): string {
-    const route = href.split(this.mainWindow.location.host)[1] as string | undefined;
+    const route = href.includes(location.origin) ? 
+      href.split(this.mainWindow.location.origin)[1] :
+      href;
 
-    if (route) {
-      let cleanRoute = route.indexOf('?') >= 0 ? route.split('?')[0] : route;
-      cleanRoute = route.indexOf('#') >= 0 ? route.split('#')[0] : cleanRoute;
+    let cleanRoute = route.indexOf('?') >= 0 ? route.split('?')[0] : route;
+    cleanRoute = route.indexOf('#') >= 0 ? route.split('#')[0] : cleanRoute;
 
-      if (cleanRoute.length > 1 && cleanRoute.endsWith('/')) {
-        cleanRoute = cleanRoute.substring(0, cleanRoute.length - 1);
-      }
-
-      return cleanRoute.replace('.html', Strings.Empty);
-    } else {
-      return href;
+    if (cleanRoute.length > 1 && cleanRoute.endsWith('/')) {
+      cleanRoute = cleanRoute.substring(0, cleanRoute.length - 1);
     }
+
+    return cleanRoute.replace('.html', Strings.Empty);
   }
 
   private getQueryParams(href: string): Map<string, string> {
