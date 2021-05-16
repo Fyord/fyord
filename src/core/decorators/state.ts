@@ -26,7 +26,11 @@ function definePropertyForStateInStore(target: Component, key: string, storeType
     // @ts-ignore
     const component = this as Component;
     const store = storeType === StoreType.App ? component.App.Store : component.State;
-    store.SetStateAt(newValue, key);
+    const currentValue = store.GetStateAt(key);
+
+    if (newValue !== currentValue) {
+      store.SetStateAt(newValue, key);
+    }
   };
 
   Object.defineProperty(target, key, {

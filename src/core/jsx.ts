@@ -34,8 +34,7 @@ export class JsxRenderer {
 
     Asap(() => {
       new Command(() => {
-        const element = document.getElementById(id) as HTMLElement;
-        element.addEventListener(event, func);
+        document.getElementById(id)?.addEventListener(event, func);
       }).Execute();
     });
   }

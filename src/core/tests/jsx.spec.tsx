@@ -1,6 +1,7 @@
 import { Component } from '../component';
 import { JsxRenderer, ParseJsx, Fragment } from '../jsx';
 import { TestHelpers } from '../../utilities/testHelpers';
+import { Strings } from 'tsbase/Functions/Strings';
 
 describe('JsxRenderer', () => {
   it('should return the outer html of a parsed jsx node with only inner text', () => {
@@ -55,6 +56,17 @@ describe('JsxRenderer', () => {
 
     expect(renderedHtml).toEqual('<button id="test-id"></button>');
     expect(eventProperlyBound).toBeTruthy();
+  });
+
+  it('should not attempt to add event listeners if bind element is deleted', async () => {
+    document.body.innerHTML = Strings.Empty;
+    const jsxToParse = <button id="test-id" onclick={() => null}></button>;
+
+    JsxRenderer.RenderJsx(jsxToParse);
+
+    await TestHelpers.TimeLapsedCondition(() => {
+      return expect(document.getElementById('test-id')).toBeNull();
+    });
   });
 
   it('should add guid ids for bound events if none are given', () => {

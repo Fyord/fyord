@@ -29,6 +29,17 @@ describe('State Decorators', () => {
     expect(testComponent.AppStoreTest).toEqual(1);
   });
 
+  it('should not set properties that have not changed', () => {
+    testComponent.AppStoreTest = 1;
+    testComponent.StateTest = 1;
+
+    testComponent.AppStoreTest = 1;
+    testComponent.StateTest = 1;
+
+    expect(testComponent.StateTest).toEqual(1);
+    expect(testComponent.AppStoreTest).toEqual(1);
+  });
+
   it('should not add additional app store subscribers once one is set', () => {
     testComponent.AppStoreTest;
     testComponent.AppStoreTest;
