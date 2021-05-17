@@ -31,6 +31,8 @@ describe('Router', () => {
     mockWindow.Setup(w => w.document, mockDocument.Object);
     mockWindow.Setup(w => w.history, mockHistory.Object);
     mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
+    mockWindow.Setup(w => w.scroll(0, 0));
+    mockDocument.Setup(d => d.getElementById(Strings.Empty), null);
 
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
   });
@@ -138,5 +140,38 @@ describe('Router', () => {
     });
 
     expect(routingAssertionsMet).toBeTruthy();
+  });
+
+  it('should scroll to the top of the page on route change when no hash id available', async () => {
+    const href = `${host}`;
+    classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
+
+    await classUnderTest.RouteTo(href);
+
+    const scrollCalled = await TestHelpers.TimeLapsedCondition(() => {
+      return mockWindow.TimesMemberCalled(w => w.scroll(0, 0)) >= 1;
+    });
+    expect(scrollCalled).toBeTruthy();
+  });
+
+  it('should scroll to the top of the page on route change when no hash id available', async () => {
+    mockWindow.Setup(w => w.scrollTo(0, 0));
+    const scrollToElement = document.createElement('div');
+    scrollToElement.id = 'fake';
+    const href = `${host}#fake`;
+    mockDocument.Setup(d => d.getElementById('fake'), scrollToElement);
+    classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
+
+    await classUnderTest.RouteTo(href);
+
+    const scrollToCalled = await TestHelpers.TimeLapsedCondition(() => {
+      return mockWindow.TimesMemberCalled(w => w.scrollTo(0, 0)) >= 1;
+    });
+    expect(scrollToCalled).toBeTruthy();
+  });
+
+  it('should not scroll on route event with no route data', async () => {
+    classUnderTest.Route.Publish();
+    mockWindow.Verify(w => w.scroll(0, 0), Times.Never);
   });
 });

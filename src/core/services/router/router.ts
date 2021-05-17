@@ -8,6 +8,7 @@ export interface IRouter {
   Route: AsyncObservable<Route>;
   RouteHandled: string;
   CurrentRoute?: Route;
+  RouteChangeScrollingEnabled: boolean;
   UseClientRouting(): void;
   RouteTo(href: string, push?: boolean): Promise<Route>;
   GetRouteFromHref(href: string): Route;
@@ -29,20 +30,26 @@ export class Router implements IRouter {
   public Route = new AsyncObservable<Route>();
   public RouteHandled = Strings.Empty;
   public CurrentRoute?: Route;
+  public RouteChangeScrollingEnabled = true;
 
   private constructor(
     private mainWindow: Window,
     private xssSanitizer: IXssSanitizerService
   ) {
-    this.Route.Subscribe(async () => {
+    this.Route.Subscribe(async (route?: Route) => {
       this.RouteHandled = Strings.Empty;
+
+      if (route && this.RouteChangeScrollingEnabled) {
+        Asap(() => {
+          this.scrollToTopOrHash(route);
+        });
+      }
     });
 
     window.onpopstate = (async () => {
       await this.RouteTo(this.mainWindow.location.href, false);
     });
   }
-
   public UseClientRouting(): void {
     Asap(() => {
       const routeAttribute = 'routed';
@@ -139,5 +146,18 @@ export class Router implements IRouter {
     const hashSplitRouteStrings = route.indexOf('#') >= 0 ? route.split('#') : [];
     hashSplitRouteStrings.shift();
     return hashSplitRouteStrings.map(s => this.xssSanitizer.PlainText(decodeURI(s)));
+  }
+
+  private scrollToTopOrHash(route: Route) {
+    const hashElementId = route.hashParams[0];
+    if (hashElementId) {
+      const hashElement = this.mainWindow.document.getElementById(hashElementId);
+      if (hashElement) {
+        this.mainWindow.scrollTo(0, hashElement.offsetTop - 50);
+      }
+
+    } else {
+      this.mainWindow.scroll(0, 0);
+    }
   }
 }
