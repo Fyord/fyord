@@ -4,22 +4,22 @@ import { Route } from './services/router/route';
 import { App as _App } from './app';
 import { Jsx, JsxRenderer } from './jsx';
 import { RecursiveReRender } from '../utilities/recursiveReRender';
-
-export type StateFunction<T> = (newValue?: T) => (T | undefined);
+import { Asap } from '../utilities/asap';
 
 export abstract class Component {
   public static IssuedIds = new Array<string>();
-  public State = new EventStore<any>();
-  private ids = new Map<string, string>();
 
   /**
    * The unique id associated with this class rendered dom element
    */
   public Id: string;
-
+  public State = new EventStore<any>();
   public get Element(): HTMLElement | null {
     return this.windowDocument.getElementById(this.Id);
   }
+
+  private ids = new Map<string, string>();
+  private mutationObserver: MutationObserver;
 
   constructor(
     protected windowDocument: Document = document,
@@ -27,29 +27,35 @@ export abstract class Component {
   ) {
     this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
+
+    this.mutationObserver = new MutationObserver(() => {
+      if (!this.Element) {
+        this.mutationObserver.disconnect();
+        this.Disconnected();
+      }
+    });
   }
 
   /**
-   * Returns a unique id for the given key scoped to the component instance
-   * @param key
+   * The html template or view representing this component
    */
-  public Ids(key: string): string {
-    if (!this.ids.has(key)) {
-      this.ids.set(key, `${key}-${Guid.NewGuid()}`);
-    }
-    return this.ids.get(key) as string;
-  }
+  public abstract Template: (route?: Route) => Promise<Jsx>;
 
   /**
-   * Returns the markup output of the component to be rendered to the dom, including html
+   * Returns the render-able html from the component's template
    * @param route
    */
   public async Render(route?: Route, includeWrapper = true): Promise<string> {
+    Asap(() => {
+      if (this.Element && this.Element.parentElement) {
+        this.mutationObserver.observe(this.Element.parentElement, { childList: true });
+      }
+    });
+
     const content = this.getOuterHtml(await this.Template(route));
+
     return includeWrapper ? /*html*/ `<div id="${this.Id}">${content}</div>` : content;
   }
-
-  public abstract Template: (route?: Route) => Promise<Jsx>;
 
   /**
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior
@@ -65,6 +71,19 @@ export abstract class Component {
       RecursiveReRender(this.Element, newElement);
       this.App.Router.UseClientRouting();
     }
+  }
+
+  protected Disconnected: () => void = () => null;
+
+  /**
+   * Returns a unique id for the given key scoped to the component instance
+   * @param key
+   */
+  public Ids(key: string): string {
+    if (!this.ids.has(key)) {
+      this.ids.set(key, `${key}-${Guid.NewGuid()}`);
+    }
+    return this.ids.get(key) as string;
   }
 
   private getOuterHtml(html: string | Jsx): string {

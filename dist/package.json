@@ -14,7 +14,7 @@
     "framework"
   ],
   "license": "MIT",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "description": "Light-weight framework designed to embrace core competencies",
   "private": false,
   "main": "./module.js",

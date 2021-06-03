@@ -8,11 +8,15 @@ import { Component } from '../component';
 import { App } from '../app';
 import { IRouter, Route } from '../services/module';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
+import { Asap } from '../../utilities/asap';
+import { TestHelpers } from '../../utilities/testHelpers';
 
 class FakeComponent extends Component {
+  public DisconnectedCalled = false;
   public Template = async () => <></>;
   SetState = (state: IEventStore<any>) => this.State = state as EventStore<any>;
   SetStateAt = (value: any, path: string) => this.State.SetStateAt(value, path);
+  Disconnected = () => this.DisconnectedCalled = true;
 }
 
 class JsxComponent extends Component {
@@ -101,5 +105,38 @@ describe('Component', () => {
   it('should return null for element when it is not rendered', () => {
     mockDocument.Setup(d => d.getElementById(classUnderTest.Id), null);
     expect(classUnderTest.Element).toBeNull();
+  });
+
+  it('should return null as default behavior for disconnected', () => {
+    expect(new JsxComponent()['Disconnected']()).toBeFalsy();
+  });
+
+  it('should observe mutations on parent element and call disconnected when element no longer exists in the dom', async () => {
+    classUnderTest = new FakeComponent();
+    document.body.innerHTML = await classUnderTest.Render();
+
+    Asap(() => {
+      classUnderTest.Element?.remove();
+    });
+
+    const disconnectedCalled = await TestHelpers.TimeLapsedCondition(() => {
+      return classUnderTest.DisconnectedCalled; // assertions proving expected behavior was met
+    });
+    expect(disconnectedCalled).toBeTruthy();
+  });
+
+  it('should observe mutations on parent element BUT NOT call disconnected when the component is still in the dom', async () => {
+    classUnderTest = new FakeComponent();
+    document.body.innerHTML = await classUnderTest.Render();
+
+    Asap(() => {
+      const newDiv = document.createElement('div');
+      classUnderTest.Element?.parentElement?.appendChild(newDiv);
+    });
+
+    const disconnectedCalled = await TestHelpers.TimeLapsedCondition(() => {
+      return classUnderTest.DisconnectedCalled; // assertions proving expected behavior was met
+    });
+    expect(disconnectedCalled).toBeFalsy();
   });
 });
