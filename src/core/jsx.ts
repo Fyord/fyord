@@ -20,13 +20,13 @@ export function ParseJsx(nodeName, attributes, ...children): Jsx {
 }
 
 export class JsxRenderer {
-  public static RenderJsx(jsx: Jsx): string {
-    return JsxRenderer.transformJsxToHtml(jsx)
+  public static RenderJsx(jsx: Jsx, mainDocument: Document | ShadowRoot = document): string {
+    return JsxRenderer.transformJsxToHtml(jsx, mainDocument)
       .outerHTML
       .replace(/<(f|.f)ragment>/g, Strings.Empty);
   }
 
-  private static addElementEventListener(attribute: string, jsx: Jsx, element: HTMLElement) {
+  private static addElementEventListener(attribute: string, jsx: Jsx, element: HTMLElement, mainDocument: Document | ShadowRoot) {
     const event = attribute.split('on')[1] as EventTypes;
     const func = jsx.attributes[attribute] as unknown as (event: Event | null) => any;
     const id = element.attributes['id'] ? element.attributes['id'].nodeValue : Guid.NewGuid();
@@ -34,18 +34,18 @@ export class JsxRenderer {
 
     Asap(() => {
       new Command(() => {
-        document.getElementById(id)?.addEventListener(event, func);
+        mainDocument.getElementById(id)?.addEventListener(event, func);
       }).Execute();
     });
   }
 
   // eslint-disable-next-line complexity
-  private static transformJsxToHtml(jsx: Jsx): HTMLElement {
+  private static transformJsxToHtml(jsx: Jsx, mainDocument: Document | ShadowRoot): HTMLElement {
     const dom: HTMLElement = document.createElement(jsx.nodeName);
 
     for (const key in jsx.attributes) {
       if (DomEvents.includes(key)) {
-        this.addElementEventListener(key, jsx, dom);
+        this.addElementEventListener(key, jsx, dom, mainDocument);
       } else {
         dom.setAttribute(key, jsx.attributes[key]);
       }
@@ -60,7 +60,7 @@ export class JsxRenderer {
           dom.appendChild(document.createTextNode(childText));
         }
       } else if (child) {
-        dom.appendChild(JsxRenderer.transformJsxToHtml(child));
+        dom.appendChild(JsxRenderer.transformJsxToHtml(child, mainDocument));
       }
     }
 
