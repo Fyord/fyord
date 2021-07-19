@@ -52,7 +52,7 @@ export class JsxRenderer {
     }
 
     for (const child of jsx.children) {
-      if (typeof child === 'string' || JsxRenderer.nodeIsNumberOrBoolean(child)) {
+      if (typeof child === 'string' || typeof child === 'number') {
         const childText = child.toString();
         if (childText.trim().startsWith('<div id="fy-')) {
           JsxRenderer.appendLegitimateComponentsToHtml(childText, dom, child);
@@ -65,11 +65,6 @@ export class JsxRenderer {
     }
 
     return dom;
-  }
-
-  private static nodeIsNumberOrBoolean(node: any): boolean {
-    return typeof node === 'number' ||
-      typeof node === 'boolean';
   }
 
   private static appendLegitimateComponentsToHtml(childText: string, dom: HTMLElement, child: string | Jsx) {

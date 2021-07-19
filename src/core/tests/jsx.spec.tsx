@@ -80,4 +80,28 @@ describe('JsxRenderer', () => {
     const expectedOuterHtml = '<p>test</p><p><span>test</span></p>';
     expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
   });
+
+  it('should parse jsx and render the text false', () => {
+    const jsxToParse = <>false</>;
+    const expectedOuterHtml = 'false';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
+
+  it('should parse jsx and NOT render the boolean value false', () => {
+    const jsxToParse = <>{false}</>;
+    const expectedOuterHtml = '';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
+
+  it('should parse jsx and render the right side of the && operator when the predicate is true', () => {
+    const jsxToParse = <>{true && 'test'}</>;
+    const expectedOuterHtml = 'test';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
+
+  it('should parse jsx and NOT render "false" when the && operator is used with a falsy predicate', () => {
+    const jsxToParse = <>{false && 'test'}</>;
+    const expectedOuterHtml = '';
+    expect(JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
 });
