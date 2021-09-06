@@ -16,24 +16,32 @@ describe('Storage Decorators', () => {
 
   it('should store a string in session storage', () => {
     expect(testComponent.SessionTest).toEqual('session');
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('session');
   });
 
   it('should store a string in local storage', () => {
     expect(testComponent.LocalTest).toEqual('local');
+    expect(window.localStorage.getItem('LocalTest')).toEqual('local');
   });
 
   it('should store a number', () => {
     testComponent.SessionTest = 1;
+
     expect(testComponent.SessionTest).toEqual(1);
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('1');
   });
 
   it('should store an array', () => {
     testComponent.LocalTest = [1, 2, 3];
+
     expect(testComponent.LocalTest).toEqual([1, 2, 3]);
+    expect(window.localStorage.getItem('LocalTest')).toEqual('[1,2,3]');
   });
 
   it('should store an object', () => {
     testComponent.SessionTest = { one: 1, two: 2, three: 3 };
+
     expect(testComponent.SessionTest).toEqual({ one: 1, two: 2, three: 3 });
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('{\"one\":1,\"two\":2,\"three\":3}');
   });
 });
