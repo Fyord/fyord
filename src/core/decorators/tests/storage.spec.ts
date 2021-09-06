@@ -4,7 +4,6 @@ import { Jsx } from '../../jsx';
 import { Route } from '../../services/module';
 import { Session, Local } from '../storage';
 
-
 class TestComponent extends Component {
   public Template: (route?: Route) => Promise<Jsx> = async () => (Strings.Empty as any);
   @Session public SessionTest: any = 'session';

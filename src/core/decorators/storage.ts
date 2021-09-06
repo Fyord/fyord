@@ -1,11 +1,9 @@
 import { DomStorageInterface, DomStorageMode } from 'tsbase/Persistence/GenericStorageInterfaces/DomStorageInterface';
 import { Component } from '../component';
 
-
 function definePropertyForStateInStore(target: Component, key: string, type: DomStorageMode) {
   const storage = new DomStorageInterface(type);
 
-  // eslint-disable-next-line complexity
   const getter = function () {
     const rawValue = storage.GetValue(key);
     if (
