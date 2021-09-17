@@ -5,19 +5,19 @@ function definePropertyForStateInStore(target: Component, key: string, type: Dom
   const storage = new DomStorageInterface(type);
 
   const getter = function () {
-    const rawValue = storage.GetValue(key);
+    const result = storage.GetValue(key);
     if (
-      rawValue.IsSuccess &&
-      typeof rawValue.Value === 'string' &&
+      result.IsSuccess &&
+      typeof result.Value === 'string' &&
       (
-        rawValue.Value.startsWith('{') ||
-        rawValue.Value.startsWith('[') ||
-        !isNaN(parseFloat(rawValue.Value))
+        result.Value.startsWith('{') ||
+        result.Value.startsWith('[') ||
+        !isNaN(parseFloat(result.Value))
       )
     ) {
-      return JSON.parse(rawValue.Value);
+      return JSON.parse(result.Value);
     } else {
-      return rawValue.Value;
+      return result.Value;
     }
   };
 
