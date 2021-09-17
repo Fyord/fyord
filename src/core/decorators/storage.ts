@@ -22,7 +22,7 @@ function definePropertyForStateInStore(target: Component, key: string, type: Dom
   };
 
   const setter = function (newValue) {
-    const valueToStore = typeof newValue === 'object' ?
+    const valueToStore = typeof newValue !== 'string' ?
       JSON.stringify(newValue) : newValue;
 
     storage.SetValue(key, valueToStore);
