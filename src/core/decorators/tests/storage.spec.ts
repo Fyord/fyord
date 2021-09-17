@@ -23,10 +23,17 @@ describe('Storage Decorators', () => {
     expect(window.localStorage.getItem('LocalTest')).toEqual('local');
   });
 
-  it('should store a number', () => {
+  it('should store a number and retrieve a number', () => {
     testComponent.SessionTest = 1;
 
     expect(testComponent.SessionTest).toEqual(1);
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('1');
+  });
+
+  it('should store a number as a string and retrieve a string', () => {
+    testComponent.SessionTest = '1';
+
+    expect(testComponent.SessionTest).toEqual('1');
     expect(window.sessionStorage.getItem('SessionTest')).toEqual('1');
   });
 
@@ -42,5 +49,26 @@ describe('Storage Decorators', () => {
 
     expect(testComponent.SessionTest).toEqual({ one: 1, two: 2, three: 3 });
     expect(window.sessionStorage.getItem('SessionTest')).toEqual('{\"one\":1,\"two\":2,\"three\":3}');
+  });
+
+  it('should store a boolean and retrieve a boolean', () => {
+    testComponent.SessionTest = true;
+
+    expect(testComponent.SessionTest).toEqual(true);
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('true');
+  });
+
+  it('should store a boolean as a string and retrieve a string', () => {
+    testComponent.SessionTest = 'true';
+
+    expect(testComponent.SessionTest).toEqual('true');
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('true');
+  });
+
+  it('should store a boolean as a string and retrieve a string', () => {
+    testComponent.SessionTest = undefined;
+
+    expect(testComponent.SessionTest).toEqual('undefined');
+    expect(window.sessionStorage.getItem('SessionTest')).toEqual('undefined');
   });
 });
