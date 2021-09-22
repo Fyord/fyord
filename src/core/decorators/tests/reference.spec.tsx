@@ -10,8 +10,8 @@ class TestComponent extends Component {
   @Reference public InputRef!: HTMLInputElement;
 
   public Template: (route?: Route) => Promise<Jsx> = async () => <>
-    <p id={this.ParagraphRef}>test</p>
-    <input id={this.InputRef} type="text"></input>
+    <p ref={this.ParagraphRef}>test</p>
+    <input ref={this.InputRef} type="text"></input>
   </>;
 }
 

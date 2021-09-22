@@ -3,8 +3,7 @@ import { Component } from '../component';
 
 export function Reference(target: Component, key: string) {
   const id = Guid.NewGuid();
-
-  const element = () => document.getElementById(id) as HTMLElement;
+  const element = () => document.querySelector(`[ref='${id}']`) as HTMLElement;
 
   const getter = function () {
     return element() || id;
