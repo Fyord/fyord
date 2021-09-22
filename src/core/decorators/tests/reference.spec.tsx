@@ -15,7 +15,7 @@ class TestComponent extends Component {
   </>;
 }
 
-describe('Storage Decorators', () => {
+describe('Reference Decorator', () => {
   let testComponent: TestComponent;
 
   beforeEach(() => {
