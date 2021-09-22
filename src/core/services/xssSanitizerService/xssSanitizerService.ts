@@ -1,7 +1,7 @@
 import { FilterXSS, IFilterXSSOptions, IWhiteList } from 'xss';
 
 const defaultPlainTextFilterOptions: IFilterXSSOptions = {
-  whiteList: [] as IWhiteList,
+  whiteList: {} as IWhiteList,
   stripIgnoreTag: true,
   stripIgnoreTagBody: ['script']
 };
