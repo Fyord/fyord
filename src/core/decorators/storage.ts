@@ -3,7 +3,7 @@ import { Component } from '../component';
 
 const storageTypePostfix = '_storage_type';
 
-function definePropertyForStateInStore(target: Component, key: string, type: DomStorageMode) {
+function definePropertyForStorage(target: Component, key: string, type: DomStorageMode) {
   const storage = new DomStorageInterface(type);
 
   const getter = function () {
@@ -37,9 +37,9 @@ function definePropertyForStateInStore(target: Component, key: string, type: Dom
 }
 
 export function Session(target: Component, key: string) {
-  definePropertyForStateInStore(target, key, DomStorageMode.Session);
+  definePropertyForStorage(target, key, DomStorageMode.Session);
 }
 
 export function Local(target: Component, key: string) {
-  definePropertyForStateInStore(target, key, DomStorageMode.Local);
+  definePropertyForStorage(target, key, DomStorageMode.Local);
 }
