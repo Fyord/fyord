@@ -4,7 +4,7 @@
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Result } from 'tsbase/Patterns/Result/Result';
 
-const noChangeAttributes = ['id', 'value'];
+const noChangeAttributes = ['id', 'value', 'ref'];
 
 export function RecursiveReRender(oldElement: Element, newElement: Element): Result {
   return new Command(() => {
