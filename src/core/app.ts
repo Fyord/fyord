@@ -54,6 +54,7 @@ export class App {
   public Logger = Logger.Instance;
   public Store = new EventStore<any>();
   public Layout = new Observable<Jsx>();
+  private defaultLayout: string = '';
 
   private constructor(
     public Router: IRouter,
@@ -67,6 +68,10 @@ export class App {
     } else {
       this.EnvironmentVariables = developmentEnvironmentVariables;
 
+      this.Router.Route.Subscribe(async () => {
+        this.restoreDefaultLayout();
+      });
+
       App.loggerSubscription = this.Logger.EntryLogged.Subscribe(logEntry => mainConsole.warn(logEntry));
     }
   }
@@ -76,20 +81,14 @@ export class App {
   }
 
   public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {
-    const layoutContents = await initialLayout();
-    const layout = typeof layoutContents === 'string' ? layoutContents : JsxRenderer.RenderJsx(layoutContents);
-
-    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${layout}</div>`;
-    await this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
-
-    this.restoreDefaultLayoutOnRoute(layout);
+    this.defaultLayout = JsxRenderer.RenderJsx(await initialLayout());
+    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${this.defaultLayout}</div>`;
     this.subscribeToLayoutChanges();
+    await this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
   }
 
-  private restoreDefaultLayoutOnRoute(layout: string) {
-    this.Router.Route.Subscribe(async () => {
-      this.setRootElement(rootElementIds.layout, layout || Strings.Empty, true);
-    });
+  private restoreDefaultLayout() {
+    this.setRootElement(rootElementIds.layout, this.defaultLayout || Strings.Empty, true);
   }
 
   private subscribeToLayoutChanges() {

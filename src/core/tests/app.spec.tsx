@@ -24,6 +24,7 @@ const ProductionEnvironmentVariables = new Map<string, string>([
 
 describe('App', () => {
   let classUnderTest: App;
+  const fakeRouteObservable = new Observable<Route>();
   const mockRouter = new Mock<IRouter>();
   const mockDocument = new Mock<Document>();
   const mockConsole = new Mock<Console>();
@@ -32,6 +33,7 @@ describe('App', () => {
     const appRootDiv = document.createElement('div');
     mockDocument.Setup(d => d.getElementById('app-root'), appRootDiv);
     mockConsole.Setup(c => c.warn({} as LogEntry));
+    mockRouter.Setup(r => r.Route, fakeRouteObservable);
 
     classUnderTest = App.Instance(
       Environments.Development,
@@ -95,22 +97,20 @@ describe('App', () => {
     expect(classUnderTest.Store.GetStateAt<string>('test')).toEqual('test');
   });
 
-  async function setupStartedApp(useJsx = true): Promise<Observable<Route>> {
+  async function setupStartedApp(): Promise<Observable<Route>> {
     App.Destroy();
-    const fakeRouteObservable = new Observable<Route>();
     const fakeDiv = document.createElement('div');
     mockDocument.Setup(d => d.getElementById('app-root-layout'), fakeDiv);
     mockRouter.Setup(r => r.UseClientRouting());
     mockRouter.Setup(r => r.GetRouteFromHref(''), {} as Route);
     mockRouter.Setup(r => r.RouteTo(''), {} as Route);
-    mockRouter.Setup(r => r.Route, fakeRouteObservable);
     classUnderTest = App.Instance(
       Environments.Production,
       ProductionEnvironmentVariables,
       DevelopmentEnvironmentVariables,
       mockRouter.Object,
       mockDocument.Object);
-    const layout = async () => useJsx ? <></> : Strings.Empty as any;
+    const layout = async () => <></>;
 
     await classUnderTest.Start(layout);
 
@@ -118,25 +118,24 @@ describe('App', () => {
   }
 
   it('should start the application given initial layout', async () => {
-    const fakeRouteObservable = await setupStartedApp(false);
+    const fakeRouteObservable = await setupStartedApp();
 
     fakeRouteObservable.Publish({} as Route);
+
     mockRouter.Verify(r => r.GetRouteFromHref(''), Times.Once);
-    mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 4);
   });
 
   it('should subscribe to layout changes with empty string as default', async () => {
     await setupStartedApp();
-
     classUnderTest.Layout.Publish();
-    mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 3);
   });
 
   it('should subscribe to layout changes with jsx', async () => {
     await setupStartedApp();
-
     classUnderTest.Layout.Publish(<><header></header><main></main><footer></footer></>);
-    mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 3);
   });
 
   it('should not log logger entries to console as warnings when in prod mode', () => {
