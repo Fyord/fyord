@@ -5,7 +5,6 @@ import { Environments } from '../environments';
 import { App } from '../app';
 import { IRouter, Route } from '../services/module';
 import { ParseJsx, Fragment } from '../jsx';
-import { Strings } from 'tsbase/Functions/Strings';
 
 enum EnvironmentVariables {
   Mode = 'mode',
@@ -28,6 +27,7 @@ describe('App', () => {
   const mockRouter = new Mock<IRouter>();
   const mockDocument = new Mock<Document>();
   const mockConsole = new Mock<Console>();
+  const layout = async () => <></>;
 
   beforeEach(() => {
     const appRootDiv = document.createElement('div');
@@ -110,32 +110,46 @@ describe('App', () => {
       DevelopmentEnvironmentVariables,
       mockRouter.Object,
       mockDocument.Object);
-    const layout = async () => <></>;
 
     await classUnderTest.Start(layout);
 
     return fakeRouteObservable;
   }
 
-  it('should start the application given initial layout', async () => {
-    const fakeRouteObservable = await setupStartedApp();
+  it('should update the layout to the default when no custom layout is passed', async () => {
+    let layoutUpdatedCount = 0;
+    classUnderTest.Layout.Subscribe(() => layoutUpdatedCount++);
+    await setupStartedApp();
 
-    fakeRouteObservable.Publish({} as Route);
+    await classUnderTest.UpdateLayout();
 
-    mockRouter.Verify(r => r.GetRouteFromHref(''), Times.Once);
-    mockDocument.Verify(d => d.getElementById('app-root-layout'), 4);
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 1);
+    expect(await classUnderTest.Layout.CurrentIssue).toEqual(await layout());
   });
 
-  it('should subscribe to layout changes with empty string as default', async () => {
+  it('should update the layout to the a given jsx layout', async () => {
+    const newLayout = <><header></header><main></main><footer></footer></>;
     await setupStartedApp();
-    classUnderTest.Layout.Publish();
-    mockDocument.Verify(d => d.getElementById('app-root-layout'), 3);
+
+    await classUnderTest.UpdateLayout(async () => newLayout);
+
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 1);
+    expect(await classUnderTest.Layout.CurrentIssue).toEqual(newLayout);
   });
 
-  it('should subscribe to layout changes with jsx', async () => {
+  it('should not update the layout when update is called with the same layout', async () => {
+    const newLayout = <><header></header><main></main><footer></footer></>;
+    let layoutUpdatedCount = 0;
+    classUnderTest.Layout.Subscribe(() => layoutUpdatedCount++);
     await setupStartedApp();
-    classUnderTest.Layout.Publish(<><header></header><main></main><footer></footer></>);
+
+    await classUnderTest.UpdateLayout(async () => newLayout);
+    await classUnderTest.UpdateLayout(async () => newLayout);
+    await classUnderTest.UpdateLayout(async () => newLayout);
+
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 3);
+    expect(layoutUpdatedCount).toEqual(1);
+    expect(await classUnderTest.Layout.CurrentIssue).toEqual(newLayout);
   });
 
   it('should not log logger entries to console as warnings when in prod mode', () => {

@@ -3,6 +3,7 @@ import { Route } from './services/router/route';
 import { App } from './app';
 import { Component } from './component';
 import { ISeoService, SeoService } from './services/module';
+import { Jsx } from './jsx';
 
 export enum RenderModes {
   Dynamic = '<!-- fyord-dynamic-render -->',
@@ -22,6 +23,7 @@ export abstract class Page extends Component {
   public Title: string = Strings.Empty;
   public Description: string = Strings.Empty;
   public ImageUrl: string = Strings.Empty;
+  protected Layout?: () => Promise<Jsx>;
   private boundHref = Strings.Empty;
 
   constructor(
@@ -36,12 +38,12 @@ export abstract class Page extends Component {
     });
   }
 
-  private routeMatch = async (route: Route | undefined) =>
+  private routeMatch = async (route?: Route) =>
     !this.App.Router.RouteHandled &&
     route &&
     await this.Route(route);
 
-  private async handleRouteChange(route: Route | undefined): Promise<void> {
+  private async handleRouteChange(route?: Route): Promise<void> {
     if (await this.routeMatch(route)) {
       const currentHref = (route as Route).href;
       const hrefIsNew = currentHref !== this.boundHref;
@@ -57,8 +59,11 @@ export abstract class Page extends Component {
     }
   }
 
-  private async renderPageInMain(route: Route) {
+  private async renderPageInMain(route: Route): Promise<void> {
+    await this.App.UpdateLayout(this.Layout);
+
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
+
     const markup = await this.Render(route);
     this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
     this.App.Router.UseClientRouting();

@@ -14,13 +14,13 @@
     "framework"
   ],
   "license": "MIT",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "description": "Light-weight framework designed to embrace core competencies",
   "private": false,
   "main": "./module.js",
   "types": "./module.d.ts",
   "dependencies": {
-    "xss": "^1.0.8",
-    "tsbase": "^3.5.0"
+    "xss": "^1.0.9",
+    "tsbase": "^3.7.2"
   }
 }

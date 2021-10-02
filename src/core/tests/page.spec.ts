@@ -5,6 +5,7 @@ import { App } from '../app';
 import { Page } from '../page';
 import { IRouter, ISeoService, Route } from '../services/module';
 import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
+import { Jsx } from '../jsx';
 
 class FakePage extends Page {
   Template = async () => ('test' as any);
@@ -45,6 +46,7 @@ describe('Page', () => {
     mockRouter.Setup(r => r.RouteHandled, id);
     mockApp.Setup(a => a.Router, mockRouter.Object);
     mockSeoService.Setup(s => s.SetDefaultTags());
+    mockApp.Setup(a => a.UpdateLayout());
 
     classUnderTest = new FakePage(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
     classUnderTest.Id = id;

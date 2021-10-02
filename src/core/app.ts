@@ -1,4 +1,4 @@
-import { Command } from 'tsbase/Patterns/CommandQuery/Command';
+import { AsyncCommand } from 'tsbase/Patterns/CommandQuery/AsyncCommand';
 import { EventStore } from 'tsbase/Patterns/EventStore/module';
 import { Observable } from 'tsbase/Patterns/Observable/module';
 import { Logger } from 'tsbase/Utility/Logger/Logger';
@@ -8,7 +8,6 @@ import { IRouter, Router } from './services/module';
 import { Jsx, JsxRenderer } from './jsx';
 
 const rootId = 'app-root';
-const defaultAttribute = 'default';
 const rootElementIds = {
   layout: `${rootId}-layout`
 };
@@ -68,10 +67,6 @@ export class App {
     } else {
       this.EnvironmentVariables = developmentEnvironmentVariables;
 
-      this.Router.Route.Subscribe(async () => {
-        this.restoreDefaultLayout();
-      });
-
       App.loggerSubscription = this.Logger.EntryLogged.Subscribe(logEntry => mainConsole.warn(logEntry));
     }
   }
@@ -81,30 +76,27 @@ export class App {
   }
 
   public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {
-    this.defaultLayout = JsxRenderer.RenderJsx(await initialLayout());
-    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}" ${defaultAttribute}="true">${this.defaultLayout}</div>`;
-    this.subscribeToLayoutChanges();
+    const initialLayoutJsx = await initialLayout();
+    this.Layout.Publish(initialLayoutJsx);
+    this.defaultLayout = JsxRenderer.RenderJsx(initialLayoutJsx);
+
+    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}">${this.defaultLayout}</div>`;
+
     await this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
   }
 
-  private restoreDefaultLayout() {
-    this.setRootElement(rootElementIds.layout, this.defaultLayout || Strings.Empty, true);
-  }
+  public UpdateLayout(newLayout?: () => Promise<Jsx>): Promise<any> {
+    return new AsyncCommand(async () => {
+      const rootElement = this.windowDocument.getElementById(rootElementIds.layout) as HTMLElement;
 
-  private subscribeToLayoutChanges() {
-    this.Layout.Subscribe(layout => {
-      this.setRootElement(rootElementIds.layout, (layout ? JsxRenderer.RenderJsx(layout) : Strings.Empty), false);
-    });
-  }
-
-  private setRootElement(elementId: string, contents: string, defaultElement): void {
-    new Command(() => {
-      const rootElement = this.windowDocument.getElementById(elementId) as HTMLElement;
-      const currentElementIsDefault = rootElement.getAttribute(defaultAttribute) === 'true';
-
-      if (rootElement && (!currentElementIsDefault || !defaultElement)) {
-        rootElement.innerHTML = contents;
-        rootElement.setAttribute(defaultAttribute, defaultElement.toString());
+      if (newLayout) {
+        const newLayoutJsx = await newLayout();
+        if (this.Layout.CurrentIssue !== newLayoutJsx) {
+          this.Layout.Publish(newLayoutJsx);
+          rootElement.innerHTML = JsxRenderer.RenderJsx(newLayoutJsx);
+        }
+      } else {
+        rootElement.innerHTML = this.defaultLayout;
       }
     }).Execute();
   }
