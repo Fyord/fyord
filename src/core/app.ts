@@ -52,6 +52,9 @@ export class App {
   public EnvironmentVariables = new Map<string, string>();
   public Logger = Logger.Instance;
   public Store = new EventStore<any>();
+  /**
+   * @deprecated to be removed in version 2.0.0
+   */
   public Layout = new Observable<Jsx>();
   private defaultLayout: string = '';
 
