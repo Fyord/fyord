@@ -20,7 +20,9 @@
   "main": "./module.js",
   "types": "./module.d.ts",
   "dependencies": {
-    "xss": "^1.0.9",
+    "xss": "^1.0.9"
+  },
+  "peerDependencies": {
     "tsbase": "^3.7.2"
   }
 }
