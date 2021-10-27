@@ -1,10 +1,10 @@
-import { DomStorageInterface, DomStorageMode } from 'tsbase/Persistence/GenericStorageInterfaces/DomStorageInterface';
+import { DomStorage, DomStorageMode } from 'tsbase/Persistence/GenericStorage/DomStorage';
 import { Component } from '../component';
 
 const storageTypePostfix = '_storage_type';
 
 function definePropertyForStorage(target: Component, key: string, type: DomStorageMode) {
-  const storage = new DomStorageInterface(type);
+  const storage = new DomStorage(type);
 
   const getter = function () {
     const valueType = storage.GetValue(`${key}${storageTypePostfix}`).Value;
