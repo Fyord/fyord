@@ -1,5 +1,5 @@
 import { Mock, Times } from 'tsmockit';
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { IXssSanitizerService } from '../xssSanitizerService/xssSanitizerService';
 import { TestHelpers } from '../../../utilities/testHelpers';
 import { Route } from './route';

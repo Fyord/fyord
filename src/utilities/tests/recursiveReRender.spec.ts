@@ -1,4 +1,4 @@
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { RecursiveReRender } from '../recursiveReRender';
 
 describe('RecursiveReRender', () => {

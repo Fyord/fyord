@@ -1,4 +1,4 @@
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
 import { Asap } from '../../../utilities/asap';
 import { IXssSanitizerService, XssSanitizerService } from '../xssSanitizerService/xssSanitizerService';

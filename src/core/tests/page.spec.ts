@@ -1,11 +1,10 @@
 import { Mock, Times } from 'tsmockit';
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
+import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
 import { TestHelpers } from '../../utilities/testHelpers';
 import { App } from '../app';
 import { Page } from '../page';
 import { IRouter, ISeoService, Route } from '../services/module';
-import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
-import { Jsx } from '../jsx';
 
 class FakePage extends Page {
   Template = async () => ('test' as any);

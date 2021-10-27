@@ -1,7 +1,7 @@
 import { AsyncCommand } from 'tsbase/Patterns/CommandQuery/AsyncCommand';
 import { EventStore } from 'tsbase/Patterns/EventStore/module';
 import { Logger } from 'tsbase/Utility/Logger/Logger';
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { Environments } from './environments';
 import { IRouter, Router } from './services/module';
 import { Jsx, JsxRenderer } from './jsx';
@@ -72,7 +72,7 @@ export class App {
   }
 
   public InitializeStore<T>(state: T): void {
-    this.Store.SetStateAt<T>(state, Strings.Empty);
+    this.Store.SetStateAt<T>(Strings.Empty, state);
   }
 
   public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {

@@ -23,6 +23,6 @@
     "xss": "^1.0.9"
   },
   "peerDependencies": {
-    "tsbase": "^3.7.2"
+    "tsbase": "^4.0.2"
   }
 }

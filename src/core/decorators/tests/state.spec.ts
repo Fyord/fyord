@@ -1,4 +1,4 @@
-import { Strings } from 'tsbase/Constants/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { App } from '../../app';
 import { Component } from '../../component';
 import { Jsx } from '../../jsx';
