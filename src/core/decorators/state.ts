@@ -29,7 +29,7 @@ function definePropertyForStateInStore(target: Component, key: string, storeType
     const currentValue = store.GetStateAt(key);
 
     if (newValue !== currentValue) {
-      store.SetStateAt(newValue, key);
+      store.SetStateAt(key, newValue);
     }
   };
 

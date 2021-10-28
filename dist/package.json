@@ -11,7 +11,11 @@
   "keywords": [
     "typescript",
     "javascript",
-    "framework"
+    "framework",
+    "frontend",
+    "ui",
+    "jsx",
+    "components"
   ],
   "license": "MIT",
   "version": "2.0.0",
@@ -20,7 +24,9 @@
   "main": "./module.js",
   "types": "./module.d.ts",
   "dependencies": {
-    "xss": "^1.0.9",
-    "tsbase": "^3.7.2"
+    "xss": "^1.0.9"
+  },
+  "peerDependencies": {
+    "tsbase": "^4.0.2"
   }
 }

@@ -1,4 +1,4 @@
-import { Guid } from 'tsbase/Functions/Guid';
+import { Guid } from 'tsbase/System/Guid';
 import { Component } from '../component';
 
 export function Reference(target: Component, key: string) {

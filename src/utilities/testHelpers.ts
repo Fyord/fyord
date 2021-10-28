@@ -2,7 +2,7 @@ import { Mock } from 'tsmockit';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
 import { EventTypes } from '../core/eventTypes';
 import { App, IRouter, ISeoService, Route } from '../core/module';
-import { Strings } from 'tsbase/Constants/Strings';
+import { Strings } from 'tsbase/System/Strings';
 
 export class TestHelpers {
   public static GetComponentMocks() {

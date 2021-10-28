@@ -1,4 +1,4 @@
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { Route } from './services/router/route';
 import { App } from './app';
 import { Component } from './component';
