@@ -19,10 +19,10 @@ export abstract class Page extends Component {
   /**
    * Sets the predicate by which a route match is determined
    */
-  public abstract Route: (route: Route) => Promise<boolean>;
-  public Title: string = Strings.Empty;
-  public Description: string = Strings.Empty;
-  public ImageUrl: string = Strings.Empty;
+  protected abstract Route: (route: Route) => Promise<boolean>;
+  protected Title: string = Strings.Empty;
+  protected Description: string = Strings.Empty;
+  protected ImageUrl: string = Strings.Empty;
   protected Layout?: () => Promise<Jsx>;
   private boundHref = Strings.Empty;
 

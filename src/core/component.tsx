@@ -39,7 +39,7 @@ export abstract class Component {
   /**
    * The html template or view representing this component
    */
-  public abstract Template: (route?: Route) => Promise<Jsx>;
+  protected abstract Template: (route?: Route) => Promise<Jsx>;
 
   /**
    * Returns the render-able html from the component's template
