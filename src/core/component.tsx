@@ -1,4 +1,4 @@
-import { Guid } from 'tsbase/Functions/Guid';
+import { Guid } from 'tsbase/System/Guid';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
 import { Route } from './services/router/route';
 import { App as _App } from './app';
@@ -39,7 +39,7 @@ export abstract class Component {
   /**
    * The html template or view representing this component
    */
-  public abstract Template: (route?: Route) => Promise<Jsx>;
+  protected abstract Template: (route?: Route) => Promise<Jsx>;
 
   /**
    * Returns the render-able html from the component's template

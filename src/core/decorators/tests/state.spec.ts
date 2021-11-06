@@ -1,8 +1,12 @@
-import { Strings } from 'tsbase/Constants/Strings';
+/**
+ * @jest-environment jsdom
+ */
+
+import { Strings } from 'tsbase/System/Strings';
+import { Route } from '../../services/module';
 import { App } from '../../app';
 import { Component } from '../../component';
 import { Jsx } from '../../jsx';
-import { Route } from '../../services/module';
 import { State, AppStore } from '../state';
 
 class TestComponent extends Component {

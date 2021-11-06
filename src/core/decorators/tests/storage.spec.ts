@@ -1,4 +1,8 @@
-import { Strings } from 'tsbase/Constants/Strings';
+/**
+ * @jest-environment jsdom
+ */
+
+import { Strings } from 'tsbase/System/Strings';
 import { Component } from '../../component';
 import { Jsx } from '../../jsx';
 import { Route } from '../../services/module';

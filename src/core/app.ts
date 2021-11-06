@@ -1,8 +1,7 @@
 import { AsyncCommand } from 'tsbase/Patterns/CommandQuery/AsyncCommand';
 import { EventStore } from 'tsbase/Patterns/EventStore/module';
-import { Observable } from 'tsbase/Patterns/Observable/module';
 import { Logger } from 'tsbase/Utility/Logger/Logger';
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { Environments } from './environments';
 import { IRouter, Router } from './services/module';
 import { Jsx, JsxRenderer } from './jsx';
@@ -52,11 +51,9 @@ export class App {
   public EnvironmentVariables = new Map<string, string>();
   public Logger = Logger.Instance;
   public Store = new EventStore<any>();
-  /**
-   * @deprecated to be removed in version 2.0.0
-   */
-  public Layout = new Observable<Jsx>();
+  private currentLayout?: Jsx;
   private defaultLayout: string = '';
+
 
   private constructor(
     public Router: IRouter,
@@ -75,12 +72,11 @@ export class App {
   }
 
   public InitializeStore<T>(state: T): void {
-    this.Store.SetStateAt<T>(state, Strings.Empty);
+    this.Store.SetStateAt<T>(Strings.Empty, state);
   }
 
   public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {
     const initialLayoutJsx = await initialLayout();
-    this.Layout.Publish(initialLayoutJsx);
     this.defaultLayout = JsxRenderer.RenderJsx(initialLayoutJsx);
 
     this.appRoot.innerHTML = `<div id="${rootElementIds.layout}">${this.defaultLayout}</div>`;
@@ -94,8 +90,8 @@ export class App {
 
       if (newLayout) {
         const newLayoutJsx = await newLayout();
-        if (this.Layout.CurrentIssue !== newLayoutJsx) {
-          this.Layout.Publish(newLayoutJsx);
+        if (this.currentLayout !== newLayoutJsx) {
+          this.currentLayout = newLayoutJsx;
           rootElement.innerHTML = JsxRenderer.RenderJsx(newLayoutJsx);
         }
       } else {

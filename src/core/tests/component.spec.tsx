@@ -1,6 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
+
 /* eslint-disable max-lines */
 import { Mock } from 'tsmockit';
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
 import { IEventStore } from 'tsbase/Patterns/EventStore/IEventStore';
 import { ParseJsx, Fragment } from '../jsx';

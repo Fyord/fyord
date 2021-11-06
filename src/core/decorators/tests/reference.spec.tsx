@@ -1,9 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { Strings } from 'tsbase/System/Strings';
 import { Jsx, Fragment, JsxRenderer, ParseJsx } from '../../jsx';
 import { TestHelpers } from '../../../utilities/testHelpers';
 import { Component } from '../../component';
 import { Route } from '../../services/module';
 import { Reference } from '../reference';
-import { Strings } from 'tsbase/Functions/Strings';
 
 class TestComponent extends Component {
   @Reference public ParagraphRef!: HTMLParagraphElement;

@@ -1,4 +1,4 @@
-import { Strings } from 'tsbase/Constants/Strings';
+import { Strings } from 'tsbase/System/Strings';
 import { MetaTag } from './metaTag';
 import { MetaTagNames } from './metaTagNames';
 

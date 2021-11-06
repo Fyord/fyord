@@ -1,9 +1,9 @@
-import { Guid } from 'tsbase/Functions/Guid';
+import { Guid } from 'tsbase/System/Guid';
+import { Strings } from 'tsbase/System/Strings';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
 import { Component } from './component';
 import { EventTypes } from './eventTypes';
 import { DomEvents } from './domEvents';
-import { Strings } from 'tsbase/Constants/Strings';
 import { Asap } from '../utilities/asap';
 
 export type Jsx = {

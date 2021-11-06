@@ -1,7 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { Component } from '../component';
 import { JsxRenderer, ParseJsx, Fragment } from '../jsx';
 import { TestHelpers } from '../../utilities/testHelpers';
-import { Strings } from 'tsbase/Functions/Strings';
+import { Strings } from 'tsbase/System/Strings';
 
 describe('JsxRenderer', () => {
   it('should return the outer html of a parsed jsx node with only inner text', () => {

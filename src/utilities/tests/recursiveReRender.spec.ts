@@ -1,4 +1,8 @@
-import { Strings } from 'tsbase/Functions/Strings';
+/**
+ * @jest-environment jsdom
+ */
+
+import { Strings } from 'tsbase/System/Strings';
 import { RecursiveReRender } from '../recursiveReRender';
 
 describe('RecursiveReRender', () => {

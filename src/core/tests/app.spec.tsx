@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { Mock, Times } from 'tsmockit';
 import { Observable } from 'tsbase/Patterns/Observable/module';
 import { LogEntry } from 'tsbase/Utility/Logger/LogEntry';
@@ -117,14 +121,9 @@ describe('App', () => {
   }
 
   it('should update the layout to the default when no custom layout is passed', async () => {
-    let layoutUpdatedCount = 0;
-    classUnderTest.Layout.Subscribe(() => layoutUpdatedCount++);
     await setupStartedApp();
-
     await classUnderTest.UpdateLayout();
-
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 1);
-    expect(await classUnderTest.Layout.CurrentIssue).toEqual(await layout());
   });
 
   it('should update the layout to the a given jsx layout', async () => {
@@ -134,13 +133,11 @@ describe('App', () => {
     await classUnderTest.UpdateLayout(async () => newLayout);
 
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 1);
-    expect(await classUnderTest.Layout.CurrentIssue).toEqual(newLayout);
+    expect(classUnderTest['currentLayout']).toEqual(newLayout);
   });
 
   it('should not update the layout when update is called with the same layout', async () => {
     const newLayout = <><header></header><main></main><footer></footer></>;
-    let layoutUpdatedCount = 0;
-    classUnderTest.Layout.Subscribe(() => layoutUpdatedCount++);
     await setupStartedApp();
 
     await classUnderTest.UpdateLayout(async () => newLayout);
@@ -148,8 +145,7 @@ describe('App', () => {
     await classUnderTest.UpdateLayout(async () => newLayout);
 
     mockDocument.Verify(d => d.getElementById('app-root-layout'), 3);
-    expect(layoutUpdatedCount).toEqual(1);
-    expect(await classUnderTest.Layout.CurrentIssue).toEqual(newLayout);
+    expect(classUnderTest['currentLayout']).toEqual(newLayout);
   });
 
   it('should not log logger entries to console as warnings when in prod mode', () => {
