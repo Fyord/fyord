@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 /* eslint-disable max-lines */
 import { Mock } from 'tsmockit';
 import { Strings } from 'tsbase/System/Strings';

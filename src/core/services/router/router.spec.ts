@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { Mock, Times } from 'tsmockit';
 import { Strings } from 'tsbase/System/Strings';
 import { IXssSanitizerService } from '../xssSanitizerService/xssSanitizerService';

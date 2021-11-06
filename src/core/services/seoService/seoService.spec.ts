@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { SeoService } from './seoService';
 import { MetaTagNames } from './metaTagNames';
 import { MetaTag } from './metaTag';

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { RawHtml } from '../rawHtml';
 
 describe('RawHtml', () => {

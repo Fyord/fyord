@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { Strings } from 'tsbase/System/Strings';
 import { Route } from '../../services/module';
 import { App } from '../../app';
