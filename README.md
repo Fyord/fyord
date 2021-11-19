@@ -1,5 +1,9 @@
 # Fyord
 
+[![CI](https://github.com/Fyord/fyord/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyord/fyord/actions/workflows/ci.yml)
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-100%25-success?style=flat)
+![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/Fyord/fyord.svg?logo=lgtm&logoWidth=18)
+
 Fyord is a light-weight framework designed to embrace core competencies.
 
 It's designed to take advantage of everything you love about web development without the need to learn a considerable amount of new framework-specific knowledge, letting you focus your time on skills that transfer.

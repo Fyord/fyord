@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --watch",
-    "test-once": "jest --collectCoverage --coverageReporters lcov clover",
+    "test-once": "jest --collectCoverage --coverageReporters lcov clover cobertura",
     "lint": "eslint src/**/*.ts && eslint src/**/*.tsx",
     "build": "tsc --sourceMap --watch",
     "build-prod": "tsc",
