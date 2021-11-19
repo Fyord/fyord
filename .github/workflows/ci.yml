@@ -25,6 +25,13 @@ jobs:
         with:
           name: build
           path: ./dist
+      - name: Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.1.0
+        with:
+          filename: coverage/cobertura-coverage.xml
+          badge: true
+          format: 'markdown'
+          output: 'both'
       - name: Comment Code Coverage to PRs
         if: ${{ github.event_name == 'pull_request' }}
         uses: romeovs/lcov-reporter-action@v0.2.16
