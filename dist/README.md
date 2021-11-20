@@ -1,7 +1,6 @@
 # fyord
 
 [![CI](https://github.com/Fyord/fyord/actions/workflows/ci.yml/badge.svg)](https://github.com/Fyord/fyord/actions/workflows/ci.yml)
-![Code Coverage](https://img.shields.io/badge/Code%20Coverage-100%25-success?style=flat)
 ![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/Fyord/fyord.svg?logo=lgtm&logoWidth=18)
 
 Light-weight framework designed to embrace core competencies

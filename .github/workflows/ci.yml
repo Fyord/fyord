@@ -32,12 +32,12 @@ jobs:
           badge: true
           format: 'markdown'
           output: 'both'
-      - name: Comment Code Coverage to PRs
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: romeovs/lcov-reporter-action@v0.2.16
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./coverage/lcov.info
+          recreate: true
+          path: code-coverage-results.md
       - name: Publish to npm
         if: ${{ github.event_name != 'pull_request' }}
         uses: JS-DevTools/npm-publish@v1
