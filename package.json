@@ -9,7 +9,8 @@
   "scripts": {
     "test": "jest --watch",
     "test-once": "jest --collectCoverage --coverageReporters lcov clover cobertura",
-    "lint": "eslint src/**/*.ts && eslint src/**/*.tsx",
+    "lint": "eslint ./src --ext .ts,.tsx",
+    "lint-fix": "eslint ./src --ext .ts,.tsx --fix",
     "build": "tsc --sourceMap --watch",
     "build-prod": "tsc",
     "publish": "npm publish dist"
