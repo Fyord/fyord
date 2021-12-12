@@ -120,14 +120,17 @@ describe('App', () => {
     return fakeRouteObservable;
   }
 
+  const newLayout = <><header></header><main></main><footer></footer></>;
   it('should update the layout to the default when no custom layout is passed', async () => {
     await setupStartedApp();
+    await classUnderTest.UpdateLayout(async () => newLayout);
+
     await classUnderTest.UpdateLayout();
-    mockDocument.Verify(d => d.getElementById('app-root-layout'), 1);
+
+    mockDocument.Verify(d => d.getElementById('app-root-layout'), 2);
   });
 
   it('should update the layout to the a given jsx layout', async () => {
-    const newLayout = <><header></header><main></main><footer></footer></>;
     await setupStartedApp();
 
     await classUnderTest.UpdateLayout(async () => newLayout);

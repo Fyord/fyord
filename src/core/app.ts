@@ -52,8 +52,7 @@ export class App {
   public Logger = Logger.Instance;
   public Store = new EventStore<any>();
   private currentLayout?: Jsx;
-  private defaultLayout: string = '';
-
+  private defaultLayout?: Jsx;
 
   private constructor(
     public Router: IRouter,
@@ -77,9 +76,10 @@ export class App {
 
   public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {
     const initialLayoutJsx = await initialLayout();
-    this.defaultLayout = JsxRenderer.RenderJsx(initialLayoutJsx);
+    this.defaultLayout = initialLayoutJsx;
+    this.currentLayout = this.defaultLayout;
 
-    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}">${this.defaultLayout}</div>`;
+    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}">${JsxRenderer.RenderJsx(this.defaultLayout)}</div>`;
 
     await this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
   }
@@ -94,8 +94,9 @@ export class App {
           this.currentLayout = newLayoutJsx;
           rootElement.innerHTML = JsxRenderer.RenderJsx(newLayoutJsx);
         }
-      } else {
-        rootElement.innerHTML = this.defaultLayout;
+      } else if (this.currentLayout !== this.defaultLayout) {
+        this.currentLayout = this.defaultLayout;
+        rootElement.innerHTML = JsxRenderer.RenderJsx(this.defaultLayout as Jsx);
       }
     }).Execute();
   }
