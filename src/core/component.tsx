@@ -52,7 +52,7 @@ export abstract class Component {
       }
     });
 
-    const content = this.getOuterHtml(await this.Template(route));
+    const content = await this.getOuterHtml(await this.Template(route));
 
     return includeWrapper ? /*html*/ `<div id="${this.Id}">${content}</div>` : content;
   }
@@ -86,11 +86,11 @@ export abstract class Component {
     return this.ids.get(key) as string;
   }
 
-  private getOuterHtml(html: string | Jsx): string {
+  private async getOuterHtml(html: string | Jsx): Promise<string> {
     if (typeof html === 'string') {
       return html;
     } else {
-      return JsxRenderer.RenderJsx(html);
+      return await JsxRenderer.RenderJsx(html);
     }
   }
 }

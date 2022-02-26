@@ -14,14 +14,23 @@ export type Jsx = {
 
 export const Fragment = 'fragment';
 
-export function ParseJsx(nodeName, attributes, ...children): Jsx {
+export function ParseJsx(nodeName, attributes, ...children): Promise<string> | Jsx {
+  if (typeof nodeName !== 'string') {
+    const instance = new nodeName() as Component;
+    // eslint-disable-next-line no-console
+    console.log(nodeName, attributes);
+    return new Promise(async (resolve) => {
+      const result = await instance.Render();
+      resolve(result);
+    });
+  }
   children = [].concat(...children);
-  return { nodeName, attributes, children };
+  return ({ nodeName, attributes, children });
 }
 
 export class JsxRenderer {
-  public static RenderJsx(jsx: Jsx, mainDocument: Document | ShadowRoot = document): string {
-    return JsxRenderer.transformJsxToHtml(jsx, mainDocument)
+  public static async RenderJsx(jsx: Jsx, mainDocument: Document | ShadowRoot = document): Promise<string> {
+    return await (await JsxRenderer.transformJsxToHtml(jsx, mainDocument))
       .outerHTML
       .replace(/<(f|.f)ragment>/g, Strings.Empty);
   }
@@ -40,7 +49,7 @@ export class JsxRenderer {
   }
 
   // eslint-disable-next-line complexity
-  private static transformJsxToHtml(jsx: Jsx, mainDocument: Document | ShadowRoot): HTMLElement {
+  private static async transformJsxToHtml(jsx: Jsx, mainDocument: Document | ShadowRoot): Promise<HTMLElement> {
     const dom: HTMLElement = document.createElement(jsx.nodeName);
 
     for (const key in jsx.attributes) {
@@ -51,7 +60,7 @@ export class JsxRenderer {
       }
     }
 
-    for (const child of jsx.children) {
+    for (const child of await jsx.children || []) {
       if (typeof child === 'string' || typeof child === 'number') {
         const childText = child.toString();
         if (childText.trim().startsWith('<div id="fy-')) {
@@ -60,7 +69,7 @@ export class JsxRenderer {
           dom.appendChild(document.createTextNode(childText));
         }
       } else if (child) {
-        dom.appendChild(JsxRenderer.transformJsxToHtml(child, mainDocument));
+        dom.appendChild(await JsxRenderer.transformJsxToHtml(child, mainDocument));
       }
     }
 
