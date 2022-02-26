@@ -15,17 +15,20 @@ export type Jsx = {
 export const Fragment = 'fragment';
 
 export function ParseJsx(nodeName, attributes, ...children): Promise<string> | Jsx {
-  if (typeof nodeName !== 'string') {
+  if (typeof nodeName === 'function' && nodeName.constructor) {
     const instance = new nodeName() as Component;
-    for (const key in attributes) {
-      if (instance.hasOwnProperty(key)) {
-        instance[key] = attributes[key];
+    if (instance.Render) {
+      for (const key in attributes) {
+        // eslint-disable-next-line max-depth
+        if (instance.hasOwnProperty(key)) {
+          instance[key] = attributes[key];
+        }
       }
+      return new Promise(async (resolve) => {
+        const result = await instance.Render();
+        resolve(result);
+      });
     }
-    return new Promise(async (resolve) => {
-      const result = await instance.Render();
-      resolve(result);
-    });
   }
   children = [].concat(...children);
   return ({ nodeName, attributes, children });
