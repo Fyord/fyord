@@ -17,8 +17,11 @@ export const Fragment = 'fragment';
 export function ParseJsx(nodeName, attributes, ...children): Promise<string> | Jsx {
   if (typeof nodeName !== 'string') {
     const instance = new nodeName() as Component;
-    // eslint-disable-next-line no-console
-    console.log(nodeName, attributes);
+    for (const key in attributes) {
+      if (instance.hasOwnProperty(key)) {
+        instance[key] = attributes[key];
+      }
+    }
     return new Promise(async (resolve) => {
       const result = await instance.Render();
       resolve(result);
