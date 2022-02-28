@@ -16,7 +16,7 @@ export const Fragment = 'fragment';
 
 export function ParseJsx(nodeName, attributes, ...children): Promise<string> | Jsx {
   if (typeof nodeName === 'function' && nodeName.constructor) {
-    const instance = new nodeName(attributes, children) as Component;
+    const instance = new nodeName(attributes ?? undefined, children.length > 0 ? children : undefined) as Component;
     return new Promise(async (resolve) => {
       const result = await instance.Render();
       resolve(result);
