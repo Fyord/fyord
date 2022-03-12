@@ -33,7 +33,7 @@ describe('Reference Decorator', () => {
   });
 
   it('should hold a reference to an element in the template', async () => {
-    document.body.innerHTML = JsxRenderer.RenderJsx(<>{await testComponent.Render()}</>);
+    document.body.innerHTML = await JsxRenderer.RenderJsx(<>{await testComponent.Render()}</>);
 
     const paragraphHasInnerText = await TestHelpers.TimeLapsedCondition(() => {
       return testComponent.ParagraphRef.innerHTML === 'test';
@@ -43,7 +43,7 @@ describe('Reference Decorator', () => {
 
   it('should support the ability to get and set input values', async () => {
     const value = 'test value';
-    document.body.innerHTML = JsxRenderer.RenderJsx(<>{await testComponent.Render()}</>);
+    document.body.innerHTML = await JsxRenderer.RenderJsx(<>{await testComponent.Render()}</>);
 
     const inputHasSetValue = await TestHelpers.TimeLapsedCondition(() => {
       testComponent.InputRef.value = value;

@@ -79,7 +79,7 @@ export class App {
     this.defaultLayout = initialLayoutJsx;
     this.currentLayout = this.defaultLayout;
 
-    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}">${JsxRenderer.RenderJsx(this.defaultLayout)}</div>`;
+    this.appRoot.innerHTML = `<div id="${rootElementIds.layout}">${await JsxRenderer.RenderJsx(this.defaultLayout)}</div>`;
 
     await this.Router.Route.Publish(this.Router.GetRouteFromHref(location.href));
   }
@@ -92,11 +92,11 @@ export class App {
         const newLayoutJsx = await newLayout();
         if (this.currentLayout !== newLayoutJsx) {
           this.currentLayout = newLayoutJsx;
-          rootElement.innerHTML = JsxRenderer.RenderJsx(newLayoutJsx);
+          rootElement.innerHTML = await JsxRenderer.RenderJsx(newLayoutJsx);
         }
       } else if (this.currentLayout !== this.defaultLayout) {
         this.currentLayout = this.defaultLayout;
-        rootElement.innerHTML = JsxRenderer.RenderJsx(this.defaultLayout as Jsx);
+        rootElement.innerHTML = await JsxRenderer.RenderJsx(this.defaultLayout as Jsx);
       }
     }).Execute();
   }
