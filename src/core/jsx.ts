@@ -58,7 +58,7 @@ export class JsxRenderer {
       }
     }
 
-    for (const child of await jsx.children || []) {
+    for (const child of await jsx.children) {
       if (typeof child === 'string' || typeof child === 'number') {
         const childText = child.toString();
         if (childText.trim().startsWith('<div id="fy-')) {

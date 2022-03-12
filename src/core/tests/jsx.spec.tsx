@@ -1,9 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
 import { Component } from '../component';
-import { JsxRenderer, ParseJsx, Fragment } from '../jsx';
+import { JsxRenderer, ParseJsx, Fragment, Jsx } from '../jsx';
 import { TestHelpers } from '../../utilities/testHelpers';
 import { Strings } from 'tsbase/System/Strings';
 
@@ -107,5 +106,39 @@ describe('JsxRenderer', () => {
     const jsxToParse = <>{false && 'test'}</>;
     const expectedOuterHtml = '';
     expect(await JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
+  });
+
+  it('should parse jsx for fyord component that has no props to children', async () => {
+    class TestComponent extends Component {
+      constructor() {
+        super();
+      }
+      Template = async () => <>
+        <h1>Test</h1>
+      </>;
+    }
+
+    const jsxToParse = <>{await (<TestComponent />)}</>;
+    const expectedOuterHtml = '<h1>Test</h1>';
+    expect(await JsxRenderer.RenderJsx(jsxToParse)).toContain(expectedOuterHtml);
+  });
+
+  it('should parse jsx for fyord component using the first param as properties and the second param as children', async () => {
+    class TestComponent extends Component {
+      constructor(
+        private props = { title: 'default' },
+        private children: Jsx
+      ) {
+        super();
+      }
+      Template = async () => <>
+        <h1>{this.props.title}</h1>
+        {this.children}
+      </>;
+    }
+
+    const jsxToParse = <>{await (<TestComponent title='test'>test</TestComponent>)}</>;
+    const expectedOuterHtml = '<h1>test</h1>test';
+    expect(await JsxRenderer.RenderJsx(jsxToParse)).toContain(expectedOuterHtml);
   });
 });
