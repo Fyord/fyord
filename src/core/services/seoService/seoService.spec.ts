@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { SeoService } from './seoService';
+import { ISeoService, SeoService } from './seoService';
 import { MetaTagNames } from './metaTagNames';
 import { MetaTag } from './metaTag';
 
 describe('SeoService', () => {
-  let classUnderTest: SeoService;
+  let classUnderTest: ISeoService;
 
   beforeEach(() => {
     SeoService.Destroy();

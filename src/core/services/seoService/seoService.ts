@@ -11,8 +11,8 @@ export interface ISeoService {
 }
 
 export class SeoService implements ISeoService {
-  private static instance: SeoService | null = null;
-  public static get Instance(): SeoService {
+  private static instance: ISeoService | null = null;
+  public static get Instance(): ISeoService {
     return this.instance || (this.instance = new SeoService());
   }
   public static Destroy = () => SeoService.instance = null;
