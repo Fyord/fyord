@@ -1,12 +1,10 @@
-import { Guid } from 'tsbase/System/Guid';
 import { Component } from '../component';
 
 export function Reference(target: Component, key: string) {
-  const id = Guid.NewGuid();
-  const element = () => document.querySelector(`[ref='${id}']`) as HTMLElement;
-
   const getter = function () {
-    return element() || id;
+    // @ts-ignore
+    const id = `${key}-${(this as Component).Id}`;
+    return document.querySelector(`[ref='${id}']`) as HTMLElement || id;
   };
 
   Object.defineProperty(target, key, {
