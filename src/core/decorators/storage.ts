@@ -14,7 +14,7 @@ function definePropertyForStorage(target: Component, key: string, type: DomStora
       return value;
     } else {
       try {
-        return JSON.parse(value);
+        return JSON.parse(value as any);
       } catch {
         return value;
       }
