@@ -27,8 +27,9 @@
     "types": ["jasmine", "node"],
     "jsx": "react",
     "jsxFactory": "ParseJsx",
-    "jsxFragmentFactory": "Fragment"
+    "jsxFragmentFactory": "Fragment",
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.spec.tsx"]
+  "exclude": ["node_modules"]
 }

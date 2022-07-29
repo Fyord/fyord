@@ -35,20 +35,20 @@ describe('Reference Decorator', () => {
   it('should hold a reference to an element in the template', async () => {
     document.body.innerHTML = await JsxRenderer.RenderJsx(<>{await testComponent.Render()}</>);
 
-    const paragraphHasInnerText = await TestHelpers.TimeLapsedCondition(() => {
-      return testComponent.ParagraphRef.innerHTML === 'test';
-    });
-    expect(paragraphHasInnerText).toBeTruthy();
+    await TestHelpers.Expect(
+      () => testComponent.ParagraphRef.innerHTML === 'test' ? testComponent.ParagraphRef.innerHTML : null,
+      (m) => m.toEqual('test'));
   });
 
   it('should support the ability to get and set input values', async () => {
     const value = 'test value';
     document.body.innerHTML = await JsxRenderer.RenderJsx(<>{await testComponent.Render()}</>);
+    expect(testComponent.InputRef.value).toEqual(Strings.Empty);
 
-    const inputHasSetValue = await TestHelpers.TimeLapsedCondition(() => {
-      testComponent.InputRef.value = value;
-      return testComponent.InputRef.value === value;
-    });
-    expect(inputHasSetValue).toBeTruthy();
+    testComponent.InputRef.value = value;
+
+    await TestHelpers.Expect(
+      () => testComponent.InputRef.value === value ? testComponent.InputRef.value : null,
+      (m) => m.toEqual(value));
   });
 });

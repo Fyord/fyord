@@ -123,10 +123,9 @@ describe('Component', () => {
       classUnderTest.Element?.remove();
     });
 
-    const disconnectedCalled = await TestHelpers.TimeLapsedCondition(() => {
-      return classUnderTest.DisconnectedCalled; // assertions proving expected behavior was met
-    });
-    expect(disconnectedCalled).toBeTruthy();
+    await TestHelpers.Expect(
+      () => classUnderTest.DisconnectedCalled,
+      (m) => m.toBeTruthy());
   });
 
   it('should observe mutations on parent element BUT NOT call disconnected when the component is still in the dom', async () => {
@@ -138,9 +137,8 @@ describe('Component', () => {
       classUnderTest.Element?.parentElement?.appendChild(newDiv);
     });
 
-    const disconnectedCalled = await TestHelpers.TimeLapsedCondition(() => {
-      return classUnderTest.DisconnectedCalled; // assertions proving expected behavior was met
-    });
-    expect(disconnectedCalled).toBeFalsy();
+    await TestHelpers.Expect(
+      () => classUnderTest.DisconnectedCalled,
+      (m) => m.toBeFalsy());
   });
 });

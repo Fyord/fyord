@@ -138,12 +138,12 @@ describe('Router', () => {
     history.pushState({}, 'test', 'test');
     history.back();
 
-    const routingAssertionsMet = await TestHelpers.TimeLapsedCondition(() => {
-      return routedElement.getAttribute('routed') !== null &&
-        mockHistory.TimesMemberCalled(h => h.pushState({}, Strings.Empty, Strings.Empty)) >= 1;
-    });
-
-    expect(routingAssertionsMet).toBeTruthy();
+    await TestHelpers.Expect(
+      () => routedElement.getAttribute('routed'),
+      (m) => m.toBeDefined());
+    await TestHelpers.Expect(
+      () => mockHistory.TimesMemberCalled(h => h.pushState({}, Strings.Empty, Strings.Empty)),
+      (m) => m.toBeGreaterThan(1));
   });
 
   it('should scroll to the top of the page on route change when no hash id available', async () => {
@@ -152,10 +152,9 @@ describe('Router', () => {
 
     await classUnderTest.RouteTo(href);
 
-    const scrollCalled = await TestHelpers.TimeLapsedCondition(() => {
-      return mockWindow.TimesMemberCalled(w => w.scroll(0, 0)) >= 1;
-    });
-    expect(scrollCalled).toBeTruthy();
+    await TestHelpers.Expect(
+      () => mockWindow.TimesMemberCalled(w => w.scroll(0, 0)),
+      (m) => m.toBeGreaterThan(1));
   });
 
   it('should scroll to the top of the page on route change when no hash id available', async () => {
@@ -168,10 +167,9 @@ describe('Router', () => {
 
     await classUnderTest.RouteTo(href);
 
-    const scrollToCalled = await TestHelpers.TimeLapsedCondition(() => {
-      return mockWindow.TimesMemberCalled(w => w.scrollTo(0, 0)) >= 1;
-    });
-    expect(scrollToCalled).toBeTruthy();
+    await TestHelpers.Expect(
+      () => mockWindow.TimesMemberCalled(w => w.scrollTo(0, 0)),
+      (m) => m.toBeGreaterThanOrEqual(1));
   });
 
   it('should not scroll on route event with no route data', async () => {

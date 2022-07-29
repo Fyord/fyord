@@ -77,9 +77,9 @@ describe('Page', () => {
 
     await fakeRouteObservable.Publish(fakeRoute);
 
-    const componentRendered = TestHelpers.TimeLapsedCondition(() =>
-      fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) >= 0);
-    expect(componentRendered).toBeTruthy();
+    await TestHelpers.Expect(
+      () => fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) >= 0 ? fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) : 0,
+      (m) => m.toBeGreaterThanOrEqual(0));
   });
 
   it('should handle route changes on match with a different path and the component is rendered', async () => {
@@ -93,9 +93,9 @@ describe('Page', () => {
 
     await fakeRouteObservable.Publish(fakeRoute);
 
-    const componentRendered = TestHelpers.TimeLapsedCondition(() =>
-      fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) >= 0);
-    expect(componentRendered).toBeTruthy();
+    await TestHelpers.Expect(
+      () => fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) >= 0 ? fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) : 0,
+      (m) => m.toBeGreaterThanOrEqual(0));
   });
 
   it('should not re render if the component is already rendered at the same path', async () => {

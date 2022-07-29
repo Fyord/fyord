@@ -52,13 +52,13 @@ describe('JsxRenderer', () => {
     const renderedHtml = await JsxRenderer.RenderJsx(jsxToParse);
     document.body.innerHTML = renderedHtml;
 
-    const eventProperlyBound = await TestHelpers.TimeLapsedCondition(() => {
-      document.getElementById('test-id')?.click();
-      return testVariable === 1;
-    });
-
     expect(renderedHtml).toEqual('<button id="test-id"></button>');
-    expect(eventProperlyBound).toBeTruthy();
+    await TestHelpers.Expect(
+      () => {
+        document.getElementById('test-id')?.click();
+        return testVariable === 1;
+      },
+      (m) => m.toBeTruthy());
   });
 
   it('should not attempt to add event listeners if bind element is deleted', async () => {
@@ -67,9 +67,9 @@ describe('JsxRenderer', () => {
 
     await JsxRenderer.RenderJsx(jsxToParse);
 
-    await TestHelpers.TimeLapsedCondition(() => {
-      return expect(document.getElementById('test-id')).toBeNull();
-    });
+    await TestHelpers.Expect(
+      () => document.getElementById('test-id') === null ? null : false,
+      (m) => m.toBeNull());
   });
 
   it('should add guid ids for bound events if none are given', async () => {
