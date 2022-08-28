@@ -18,7 +18,7 @@
     "components"
   ],
   "license": "MIT",
-  "version": "2.1.7",
+  "version": "2.2.0",
   "description": "Light-weight framework designed to embrace core competencies",
   "private": false,
   "main": "./module.js",
@@ -27,6 +27,6 @@
     "xss": "^1.0.9"
   },
   "peerDependencies": {
-    "tsbase": "^4.6.0"
+    "tsbase": "^4.9.0"
   }
 }
