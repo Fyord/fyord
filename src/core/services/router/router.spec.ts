@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { Mock, Times } from 'tsmockit';
+import { Any, Mock, Times } from 'tsmockit';
 import { Strings } from 'tsbase/System/Strings';
 import { IXssSanitizerService } from '../xssSanitizerService/xssSanitizerService';
 import { TestHelpers } from '../../../utilities/testHelpers';
@@ -34,9 +34,10 @@ describe('Router', () => {
     mockWindow.Setup(w => w.location, mockLocation.Object);
     mockWindow.Setup(w => w.document, mockDocument.Object);
     mockWindow.Setup(w => w.history, mockHistory.Object);
-    mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
-    mockWindow.Setup(w => w.scroll(0, 0));
-    mockDocument.Setup(d => d.getElementById(Strings.Empty), null);
+    mockHistory.Setup(h => h.pushState(Any<object>(), Any<string>(), Any<string>()));
+    mockWindow.Setup(w => w.scroll(Any<number>(), Any<number>()));
+    mockWindow.Setup(w => w.scrollTo(Any<number>(), Any<number>()));
+    mockDocument.Setup(d => d.getElementById(Any<string>()), null);
 
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
   });
@@ -65,7 +66,6 @@ describe('Router', () => {
   });
 
   it('should get route to href with route params without pushing to history api', async () => {
-    mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
     const href = `${host}/one/two/`;
     mockXssSanitizer.Setup(s => s.PlainText('one'), 'one');
     mockXssSanitizer.Setup(s => s.PlainText('two'), 'two');
@@ -73,7 +73,7 @@ describe('Router', () => {
 
     const route = await classUnderTest.RouteTo(href, false);
 
-    expect(mockHistory.Verify(h => h.pushState({}, Strings.Empty, Strings.Empty), Times.Never));
+    expect(mockHistory.Verify(h => h.pushState(Any<object>(), Any<string>(), Any<string>()), Times.Never));
     expect(route.routeParams.length).toEqual(2);
   });
 
@@ -110,7 +110,6 @@ describe('Router', () => {
   });
 
   it('should use client routing', async () => {
-    mockHistory.Setup(h => h.pushState({}, Strings.Empty, Strings.Empty));
     const currentPage = `${host}/test`;
     const routedElement = document.createElement('a');
     routedElement.href = `${host}/fake`;
@@ -121,7 +120,7 @@ describe('Router', () => {
     const currentPageElement = document.createElement('a');
     currentPageElement.href = currentPage;
     mockLocation.Setup(s => s.href, currentPage);
-    mockDocument.Setup(d => d.querySelectorAll(Strings.Empty), [
+    mockDocument.Setup(d => d.querySelectorAll(Any<string>()), [
       preRoutedElement, routedElement, targetBlankElement, currentPageElement]);
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
@@ -142,7 +141,7 @@ describe('Router', () => {
       () => routedElement.getAttribute('routed'),
       (m) => m.toBeDefined());
     await TestHelpers.Expect(
-      () => mockHistory.TimesMemberCalled(h => h.pushState({}, Strings.Empty, Strings.Empty)),
+      () => mockHistory.TimesMemberCalled(h => h.pushState(Any<object>(), Any<string>(), Any<string>())),
       (m) => m.toBeGreaterThan(1));
   });
 
@@ -157,18 +156,18 @@ describe('Router', () => {
       (m) => m.toBeGreaterThan(1));
   });
 
-  it('should scroll to the top of the page on route change when no hash id available', async () => {
-    mockWindow.Setup(w => w.scrollTo(0, 0));
+  it('should scroll to the top of the page on route change when hash id available', async () => {
     const scrollToElement = document.createElement('div');
     scrollToElement.id = 'fake';
     const href = `${host}#fake`;
     mockDocument.Setup(d => d.getElementById('fake'), scrollToElement);
+    mockXssSanitizer.Setup(s => s.PlainText('fake'), 'fake');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
     await classUnderTest.RouteTo(href);
 
     await TestHelpers.Expect(
-      () => mockWindow.TimesMemberCalled(w => w.scrollTo(0, 0)),
+      () => mockWindow.TimesMemberCalled(w => w.scroll(0, 0)) && mockXssSanitizer.TimesMemberCalled(x => x.PlainText('fake')),
       (m) => m.toBeGreaterThanOrEqual(1));
   });
 
