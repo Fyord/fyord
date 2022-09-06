@@ -161,12 +161,13 @@ describe('Router', () => {
     scrollToElement.id = 'fake';
     const href = `${host}#fake`;
     mockDocument.Setup(d => d.getElementById('fake'), scrollToElement);
+    mockXssSanitizer.Setup(s => s.PlainText('fake'), 'fake');
     classUnderTest = Router.Instance(mockWindow.Object, mockXssSanitizer.Object);
 
     await classUnderTest.RouteTo(href);
 
     await TestHelpers.Expect(
-      () => mockWindow.TimesMemberCalled(w => w.scroll(0, 0)),
+      () => mockWindow.TimesMemberCalled(w => w.scroll(0, 0)) && mockXssSanitizer.TimesMemberCalled(x => x.PlainText('fake')),
       (m) => m.toBeGreaterThanOrEqual(1));
   });
 
