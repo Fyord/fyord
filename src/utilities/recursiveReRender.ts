@@ -6,7 +6,7 @@ import { Result } from 'tsbase/Patterns/Result/Result';
 
 const noChangeAttributes = ['id', 'value', 'ref'];
 
-export function RecursiveReRender(oldElement: Element, newElement: Element): Result {
+export function RecursiveReRender(oldElement: Element, newElement: Element): Result<null> {
   return new Command(() => {
     const contentHasChanged = newElement.outerHTML !== oldElement.outerHTML;
 

@@ -24,7 +24,7 @@
     "jasmine-core": "^2.5.2",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
-    "tsbase": "^4.9.0",
+    "tsbase": "^5.0.0",
     "tslib": "^2.4.0",
     "tsmockit": "^2.0.2",
     "typescript": "^4.7.4",
