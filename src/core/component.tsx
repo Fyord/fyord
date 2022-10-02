@@ -54,7 +54,7 @@ export abstract class Component {
 
     const content = await this.getOuterHtml(await this.Template(route));
 
-    return includeWrapper ? /*html*/ `<div id="${this.Id}">${content}</div>` : content;
+    return includeWrapper ? /*html*/ `<div id="${this.Id}" style="display: inline-block;">${content}</div>` : content;
   }
 
   /**
