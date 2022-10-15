@@ -8,6 +8,7 @@ export interface ISeoService {
   SetDescription(description: string): void;
   SetImageUrl(imageUrl: string): void;
   SetMetaTags(metaTags: Array<MetaTag>): void;
+  RemoveTags(...tagNames: Array<string>): void;
 }
 
 export class SeoService implements ISeoService {
@@ -57,6 +58,12 @@ export class SeoService implements ISeoService {
     title ? this.SetTitle(title) : this.SetTitle(this.originalTitle);
     description ? this.SetDescription(description) : this.SetDescription(this.originalDescription);
     imageUrl ? this.SetImageUrl(imageUrl) : this.SetImageUrl(this.originalImageUrl);
+  }
+
+  public RemoveTags(...tagNames: string[]): void {
+    tagNames.forEach(name => {
+      this.getMetaTag(name)?.remove();
+    });
   }
 
   private setOriginalMetaTags() {

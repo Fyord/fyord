@@ -77,4 +77,12 @@ describe('SeoService', () => {
     expect(metaTag && (metaTag as HTMLMetaElement).content === 'test').toBeTruthy();
   });
 
+  it('should remove meta tags by name', () => {
+    classUnderTest.SetDescription('test');
+    expect(classUnderTest['getMetaTag']('description').content).toEqual('test');
+
+    classUnderTest.RemoveTags('description', 'fakeTag');
+
+    expect(classUnderTest['getMetaTag']('description')).toBeNull();
+  });
 });
