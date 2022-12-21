@@ -17,6 +17,7 @@ export abstract class Component {
   public get Element(): HTMLElement | null {
     return this.windowDocument.getElementById(this.Id);
   }
+  protected RootElementDisplayStyle: 'block' | 'inline-block' = 'inline-block';
 
   private ids = new Map<string, string>();
   private mutationObserver: MutationObserver;
@@ -54,7 +55,7 @@ export abstract class Component {
 
     const content = await this.getOuterHtml(await this.Template(route));
 
-    return includeWrapper ? /*html*/ `<div id="${this.Id}" style="display: inline-block;">${content}</div>` : content;
+    return includeWrapper ? /*html*/ `<div id="${this.Id}" style="display: ${this.RootElementDisplayStyle};">${content}</div>` : content;
   }
 
   /**
