@@ -33,6 +33,8 @@ export abstract class Page extends Component {
   ) {
     super(windowDocument, app);
 
+    this.RootElementDisplayStyle = 'block';
+
     app.Router.Route.Subscribe(async (route) => {
       await this.handleRouteChange(route);
     });
