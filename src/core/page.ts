@@ -49,10 +49,10 @@ export abstract class Page extends Component {
     if (await this.routeMatch(route)) {
       const currentHref = (route as Route).href;
       const hrefIsNew = currentHref !== this.boundHref;
+      this.boundHref = currentHref;
+      this.App.Router.RouteHandled = this.Id;
 
       if (!this.Element || hrefIsNew) {
-        this.boundHref = currentHref;
-        this.App.Router.RouteHandled = this.Id;
         await this.renderPageInMain(route as Route);
       }
 
