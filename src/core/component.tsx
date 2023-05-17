@@ -64,10 +64,20 @@ export abstract class Component {
    */
   public async ReRender(route?: Route): Promise<void> {
     if (this.Element) {
-      const newRender = await this.Render(route, false);
+      const elementsWithRefs = Array.from(this.Element.querySelectorAll('[ref]'));
+      const refs = new Array<string>();
+      elementsWithRefs.forEach(e => {
+        refs.push(e.getAttribute('ref') as string);
+        e.removeAttribute('ref');
+      });
 
+      const newRender = await this.Render(route, false);
       const newElement = document.createElement('div');
       newElement.innerHTML = newRender;
+
+      elementsWithRefs.forEach((e, i) => {
+        e.setAttribute('ref', refs[i]);
+      });
 
       RecursiveReRender(this.Element, newElement);
       this.App.Router.UseClientRouting();

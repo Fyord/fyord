@@ -95,6 +95,16 @@ describe('Component', () => {
     expect(fakeDiv.innerHTML).toEqual(Strings.Empty);
   });
 
+  it('should temporarily remove ref attributes during re-render', async () => {
+    const fakeDiv = document.createElement('div');
+    fakeDiv.innerHTML = '<p ref="test"></p>';
+    mockDocument.Setup(d => d.getElementById(classUnderTest.Id), fakeDiv);
+
+    await classUnderTest.ReRender();
+
+    expect(fakeDiv.innerHTML).toEqual(Strings.Empty);
+  });
+
   it('should not re-render the contents of the component when it is not rendered', async () => {
     mockDocument.Setup(d => d.getElementById(classUnderTest.Id), null);
     await classUnderTest.ReRender();
