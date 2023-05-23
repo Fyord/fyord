@@ -21,6 +21,7 @@ export abstract class Component {
 
   private ids = new Map<string, string>();
   private mutationObserver: MutationObserver;
+  private reRenderQueued = false;
 
   constructor(
     protected windowDocument: Document = document,
@@ -63,24 +64,30 @@ export abstract class Component {
    * @param route
    */
   public async ReRender(route?: Route): Promise<void> {
-    if (this.Element) {
-      const elementsWithRefs = Array.from(this.Element.querySelectorAll('[ref]'));
-      const refs = new Array<string>();
-      elementsWithRefs.forEach(e => {
-        refs.push(e.getAttribute('ref') as string);
-        e.removeAttribute('ref');
+    if (!this.reRenderQueued) {
+      this.reRenderQueued = true;
+      Asap(async () => {
+        if (this.Element) {
+          const elementsWithRefs = Array.from(this.Element.querySelectorAll('[ref]'));
+          const refs = new Array<string>();
+          elementsWithRefs.forEach(e => {
+            refs.push(e.getAttribute('ref') as string);
+            e.removeAttribute('ref');
+          });
+
+          const newRender = await this.Render(route, false);
+          const newElement = document.createElement('div');
+          newElement.innerHTML = newRender;
+
+          elementsWithRefs.forEach((e, i) => {
+            e.setAttribute('ref', refs[i]);
+          });
+
+          RecursiveReRender(this.Element, newElement);
+          this.App.Router.UseClientRouting();
+          this.reRenderQueued = false;
+        }
       });
-
-      const newRender = await this.Render(route, false);
-      const newElement = document.createElement('div');
-      newElement.innerHTML = newRender;
-
-      elementsWithRefs.forEach((e, i) => {
-        e.setAttribute('ref', refs[i]);
-      });
-
-      RecursiveReRender(this.Element, newElement);
-      this.App.Router.UseClientRouting();
     }
   }
 

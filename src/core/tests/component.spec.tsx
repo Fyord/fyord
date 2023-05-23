@@ -102,7 +102,7 @@ describe('Component', () => {
 
     await classUnderTest.ReRender();
 
-    expect(fakeDiv.innerHTML).toEqual(Strings.Empty);
+    expect(fakeDiv.innerHTML).toEqual('<p ref="test"></p>');
   });
 
   it('should not re-render the contents of the component when it is not rendered', async () => {
