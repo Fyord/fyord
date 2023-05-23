@@ -86,6 +86,8 @@ export abstract class Component {
           RecursiveReRender(this.Element, newElement);
           this.App.Router.UseClientRouting();
           this.reRenderQueued = false;
+        } else {
+          this.reRenderQueued = false;
         }
       });
     }
