@@ -18,7 +18,7 @@
     "components"
   ],
   "license": "MIT",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "Light-weight framework designed to embrace core competencies",
   "private": false,
   "main": "./module.js",
