@@ -46,9 +46,14 @@ function updateElement(oldElement: Element, newElement: Element): void {
 }
 
 function updateAttributes(oldElement: Element, newElement: Element): void {
-  Array.from(newElement.attributes).filter(a => !noChangeAttributes.includes(a.name)).forEach(newAttribute => {
-    oldElement.setAttribute(newAttribute.name, newAttribute.value);
-  });
+  Array.from(newElement.attributes)
+    .filter(a =>
+      !noChangeAttributes.includes(a.name) ||
+      a.value.startsWith('fy-')
+    )
+    .forEach(newAttribute => {
+      oldElement.setAttribute(newAttribute.name, newAttribute.value);
+    });
 }
 
 function removeDeletedAttributes(oldElement: Element, newElement: Element): void {

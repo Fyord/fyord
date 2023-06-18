@@ -84,7 +84,7 @@ describe('RecursiveReRender', () => {
     expect(oldElement.innerHTML).toEqual('<div class="one two" id="one">one</div>');
   });
 
-  it('should remove attributes that are no longer set', () => {
+  it('should remove attributes that are no longer set, excluding no change attributes', () => {
     oldElement.innerHTML = '<div id="one" class="one">one</div>';
     newElement.innerHTML = '<div>two</div>';
 
@@ -92,5 +92,15 @@ describe('RecursiveReRender', () => {
 
     expect(result.IsSuccess).toBeTruthy();
     expect(oldElement.innerHTML).toEqual('<div id="one">two</div>');
+  });
+
+  it('should change id attributes when the value starts with "fy-"', () => {
+    oldElement.innerHTML = '<div id="fy-test-1">one</div>';
+    newElement.innerHTML = '<div id="fy-test-2">two</div>';
+
+    const result = RecursiveReRender(oldElement, newElement);
+
+    expect(result.IsSuccess).toBeTruthy();
+    expect(oldElement.innerHTML).toEqual('<div id="fy-test-2">two</div>');
   });
 });
