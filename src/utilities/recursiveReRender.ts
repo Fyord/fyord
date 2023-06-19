@@ -40,13 +40,13 @@ function updateChildrenWhenCompatible(oldElement: Element, newElement: Element, 
 }
 
 function updateElement(oldElement: Element, newElement: Element): void {
-  oldElement.innerHTML = newElement.innerHTML;
   updateAttributes(oldElement, newElement);
+  oldElement.innerHTML = newElement.innerHTML;
   removeDeletedAttributes(oldElement, newElement);
 }
 
 function updateAttributes(oldElement: Element, newElement: Element): void {
-  const getTagCount = (rawHtml: string) => rawHtml.match(/(<.[^(><.)]+>)/g)?.length;
+  const getTagCount = (rawHtml: string) => rawHtml.match(/(<.[^(><.)]+>)/g)!.length;
 
   Array.from(newElement.attributes)
     .filter(a =>
