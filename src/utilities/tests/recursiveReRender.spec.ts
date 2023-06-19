@@ -94,13 +94,23 @@ describe('RecursiveReRender', () => {
     expect(oldElement.innerHTML).toEqual('<div id="one">two</div>');
   });
 
-  it('should change id attributes when the value starts with "fy-"', () => {
+  it('should not change id attributes when the value starts with "fy-" if tag count is unchanged', () => {
     oldElement.innerHTML = '<div id="fy-test-1">one</div>';
     newElement.innerHTML = '<div id="fy-test-2">two</div>';
 
     const result = RecursiveReRender(oldElement, newElement);
 
     expect(result.IsSuccess).toBeTruthy();
-    expect(oldElement.innerHTML).toEqual('<div id="fy-test-2">two</div>');
+    expect(oldElement.innerHTML).toEqual('<div id="fy-test-1">two</div>');
+  });
+
+  it('should change id attributes when the value starts with "fy-" if tag count is changed', () => {
+    oldElement.innerHTML = '<div id="fy-test-1"><div><span>(</span><span>1</span><span>)</span></div></div>';
+    newElement.innerHTML = '<div id="fy-test-2"><div><span>(2)</span></div></div>';
+
+    const result = RecursiveReRender(oldElement, newElement);
+
+    expect(result.IsSuccess).toBeTruthy();
+    expect(oldElement.innerHTML).toEqual('<div id="fy-test-2"><div><span>(2)</span></div></div>');
   });
 });

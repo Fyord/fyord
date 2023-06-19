@@ -46,10 +46,12 @@ function updateElement(oldElement: Element, newElement: Element): void {
 }
 
 function updateAttributes(oldElement: Element, newElement: Element): void {
+  const getTagCount = (rawHtml: string) => rawHtml.match(/(<.[^(><.)]+>)/g)?.length;
+
   Array.from(newElement.attributes)
     .filter(a =>
       !noChangeAttributes.includes(a.name) ||
-      a.value.startsWith('fy-')
+      (a.value.startsWith('fy-') && getTagCount(oldElement.outerHTML) !== getTagCount(newElement.outerHTML))
     )
     .forEach(newAttribute => {
       oldElement.setAttribute(newAttribute.name, newAttribute.value);
