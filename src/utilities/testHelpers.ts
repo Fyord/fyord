@@ -1,3 +1,5 @@
+// intentionally not included in ./module
+
 import { EmitEventAtElement, EmitKeyEventAtElement, Expect, Mock } from 'tsmockit';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
 import { Strings } from 'tsbase/System/Strings';
