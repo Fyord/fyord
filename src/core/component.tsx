@@ -13,7 +13,7 @@ export abstract class Component {
    * The unique id associated with this class rendered dom element
    */
   public Id: string;
-  public State = new EventStore<any>();
+  public State = new EventStore<any>({});
   public get Element(): HTMLElement | null {
     return this.windowDocument.getElementById(this.Id);
   }

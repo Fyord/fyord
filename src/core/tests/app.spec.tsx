@@ -98,7 +98,7 @@ describe('App', () => {
 
   it('should initialize the app store', () => {
     classUnderTest.InitializeStore({ test: 'test' });
-    expect(classUnderTest.Store.GetStateAt<string>('test')).toEqual('test');
+    expect(classUnderTest.Store.GetState<string>('test')).toEqual('test');
   });
 
   async function setupStartedApp(): Promise<Observable<Route>> {
