@@ -55,7 +55,6 @@ export abstract class Page extends Component {
       if (!this.Element || hrefIsNew) {
         await this.renderPageInMain(route as Route);
       }
-
     } else {
       this.boundHref = Strings.Empty;
     }
