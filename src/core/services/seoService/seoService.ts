@@ -2,6 +2,8 @@ import { Strings } from 'tsbase/System/Strings';
 import { MetaTag } from './metaTag';
 import { MetaTagNames } from './metaTagNames';
 
+const ogPrefix = 'og:';
+
 export interface ISeoService {
   SetDefaultTags(title?: string, description?: string, imageUrl?: string): void;
   SetTitle(title: string): void;
@@ -83,14 +85,23 @@ export class SeoService implements ISeoService {
     if (metaTagToUpdate) {
       (metaTagToUpdate as HTMLMetaElement).content = content;
     } else {
+      const isOgTag = name.startsWith(ogPrefix);
       const meta = document.createElement('meta');
-      meta.name = name;
+
+      meta.name = isOgTag ? name.replace(ogPrefix, Strings.Empty) : name;
       meta.content = content;
+      if (isOgTag) {
+        meta.setAttribute('property', name);
+      }
+
       document.head.append(meta);
     }
   }
 
   private getMetaTag(name: string): HTMLMetaElement | null {
+    if (name.startsWith(ogPrefix)) {
+      name = name.replace(ogPrefix, Strings.Empty);
+    }
     const metaTag = document.querySelector(`meta[name='${name}']`);
     if (metaTag) {
       return metaTag as HTMLMetaElement;

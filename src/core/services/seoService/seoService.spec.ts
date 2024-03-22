@@ -43,8 +43,13 @@ describe('SeoService', () => {
 
   it('should set the document og:image', () => {
     classUnderTest.SetImageUrl('test');
-    const metaTag = document.querySelector(`meta[name='${MetaTagNames.ImageUrl}']`);
-    expect(metaTag && (metaTag as HTMLMetaElement).content === 'test').toBeTruthy();
+
+    const metaTag = document.querySelector(`meta[property='${MetaTagNames.ImageUrl}']`);
+
+    expect(metaTag).toBeDefined();
+    expect((metaTag as HTMLMetaElement).content).toEqual('test');
+    expect((metaTag as HTMLMetaElement).name).toEqual('image');
+    expect((metaTag as HTMLMetaElement).getAttribute('property')).toEqual('og:image');
   });
 
   it('should set multiple meta tags', () => {
@@ -53,7 +58,7 @@ describe('SeoService', () => {
     metaTags.push({ Name: MetaTagNames.ImageUrl, Content: 'test' });
 
     classUnderTest.SetMetaTags(metaTags);
-    const imageMetaTag = document.querySelector(`meta[name='${MetaTagNames.ImageUrl}']`);
+    const imageMetaTag = document.querySelector(`meta[property='${MetaTagNames.ImageUrl}']`);
     const descriptionMetaTag = document.querySelector(`meta[name='${MetaTagNames.Description}']`);
 
     expect(imageMetaTag && (imageMetaTag as HTMLMetaElement).content === 'test').toBeTruthy();
