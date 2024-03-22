@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { Component } from '../component';
 import { JsxRenderer, ParseJsx, Fragment, Jsx } from '../jsx';
 import { TestHelpers } from '../../utilities/testHelpers';

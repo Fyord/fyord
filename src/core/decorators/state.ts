@@ -19,17 +19,17 @@ function definePropertyForStateInStore(target: Component, key: string, storeType
       component[subKey] = subId;
     }
 
-    return store.GetStateAt(key);
+    return store.GetState(key);
   };
 
   const setter = function (newValue) {
     // @ts-ignore
     const component = this as Component;
     const store = storeType === StoreType.App ? component.App.Store : component.State;
-    const currentValue = store.GetStateAt(key);
+    const currentValue = store.GetState(key);
 
     if (newValue !== currentValue) {
-      store.SetStateAt(key, newValue);
+      store.SetState(key, newValue);
     }
   };
 

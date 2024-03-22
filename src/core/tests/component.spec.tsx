@@ -1,8 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
-/* eslint-disable max-lines */
 import { Mock } from 'tsmockit';
 import { Strings } from 'tsbase/System/Strings';
 import { Observable } from 'tsbase/Patterns/Observable/Observable';
@@ -19,7 +14,7 @@ class FakeComponent extends Component {
   public DisconnectedCalled = false;
   public Template = async () => <></>;
   SetState = (state: IEventStore<any>) => this.State = state as EventStore<any>;
-  SetStateAt = (value: any, path: string) => this.State.SetStateAt(value, path);
+  SetStateAt = (value: any, path: string) => this.State.SetState(value, path);
   Disconnected = () => this.DisconnectedCalled = true;
 }
 
@@ -45,12 +40,12 @@ describe('Component', () => {
     mockApp.Setup(a => a.Router, mockRouter.Object);
     mockApp.Setup(a => a.Store, mockEventStore.Object);
     mockEventStore.Setup(s => s.ObservableAt(Strings.Empty), fakeStateObservable);
-    mockEventStore.Setup(s => s.GetStateAt(Strings.Empty), Strings.Empty);
-    mockEventStore.Setup(s => s.SetStateAt(Strings.Empty, Strings.Empty));
+    mockEventStore.Setup(s => s.GetState(Strings.Empty), Strings.Empty);
+    mockEventStore.Setup(s => s.SetState(Strings.Empty, Strings.Empty));
 
     mockComponentState.Setup(s => s.ObservableAt(Strings.Empty), fakeComponentStateObservable);
-    mockComponentState.Setup(s => s.GetStateAt(Strings.Empty), Strings.Empty);
-    mockComponentState.Setup(s => s.SetStateAt(Strings.Empty, Strings.Empty));
+    mockComponentState.Setup(s => s.GetState(Strings.Empty), Strings.Empty);
+    mockComponentState.Setup(s => s.SetState(Strings.Empty, Strings.Empty));
 
     classUnderTest = new FakeComponent(mockDocument.Object, mockApp.Object);
     classUnderTest.SetState(mockComponentState.Object);

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { Strings } from 'tsbase/System/Strings';
 import { RecursiveReRender } from '../recursiveReRender';
 

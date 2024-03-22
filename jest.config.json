@@ -19,6 +19,7 @@
   "testMatch": [
     "**/*.(test|spec).(ts|tsx)"
   ],
+  "testEnvironment": "jsdom",
   "coveragePathIgnorePatterns": [
     "./src/utilities/testHelpers.ts",
     "/node_modules/",

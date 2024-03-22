@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { Strings } from 'tsbase/System/Strings';
 import { Jsx, Fragment, JsxRenderer, ParseJsx } from '../../jsx';
 import { TestHelpers } from '../../../utilities/testHelpers';

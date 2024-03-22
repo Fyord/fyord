@@ -1,10 +1,10 @@
 import { Guid } from 'tsbase/System/Guid';
 import { EventStore } from 'tsbase/Patterns/EventStore/EventStore';
+import { RecursiveReRender } from '../utilities/recursiveReRender';
+import { Asap } from '../utilities/asap';
 import { Route } from './services/router/route';
 import { App as _App } from './app';
 import { Jsx, JsxRenderer } from './jsx';
-import { RecursiveReRender } from '../utilities/recursiveReRender';
-import { Asap } from '../utilities/asap';
 
 export abstract class Component {
   public static IssuedIds = new Array<string>();
@@ -13,7 +13,7 @@ export abstract class Component {
    * The unique id associated with this class rendered dom element
    */
   public Id: string;
-  public State = new EventStore<any>();
+  public State = new EventStore<any>({});
   public get Element(): HTMLElement | null {
     return this.windowDocument.getElementById(this.Id);
   }
