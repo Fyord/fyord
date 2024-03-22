@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { Mock, Times } from 'tsmockit';
 import { Observable } from 'tsbase/Patterns/Observable/module';
 import { LogEntry } from 'tsbase/Utility/Logger/LogEntry';

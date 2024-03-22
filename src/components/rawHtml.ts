@@ -1,10 +1,10 @@
-import { Component, IXssSanitizerService, Jsx, XssSanitizerService } from '../core/module';
+import { Component, Jsx, XssSanitizerService } from '../core/module';
 
 export class RawHtml extends Component {
   constructor(
     private rawHtml: string,
     sanitize = true,
-    xssSanitizerService: IXssSanitizerService = XssSanitizerService.Instance()
+    xssSanitizerService = XssSanitizerService.Instance()
   ) {
     super();
 

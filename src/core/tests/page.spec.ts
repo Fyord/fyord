@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { Mock, Times } from 'tsmockit';
 import { Strings } from 'tsbase/System/Strings';
 import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
