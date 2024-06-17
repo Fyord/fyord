@@ -10,13 +10,13 @@ const rootElementIds = {
   layout: `${rootId}-layout`
 };
 
-export class App<State extends object = Record<string, any>> {
+export class App<State extends object = any> {
   private static loggerSubscription: string | null = null;
   private static environment: Environments;
   private static instance: App<any> | null = null;
 
   // eslint-disable-next-line max-params
-  public static Instance<State extends object = Record<string, any>>(
+  public static Instance<State extends object = any>(
     environment?: string,
     productionEnvironmentVariables = new Map<string, string>(),
     developmentEnvironmentVariables = new Map<string, string>(),
