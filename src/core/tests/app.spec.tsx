@@ -181,4 +181,17 @@ describe('App', () => {
     const logEntries = mockConsole.TimesMemberCalled(c => c.warn(fakeLogEntry));
     expect(logEntries).toBeGreaterThan(0);
   });
+
+  it('should reflect app <state> typing when accessing store', () => {
+    App.Destroy();
+    const appDefault = App.Instance();
+    expect(appDefault.Store.GetState(s => s.a)).toBeUndefined();
+
+    App.Destroy();
+    const appState = App.Instance<{ test: string }>();
+    appState.InitializeStore({
+      test: 'test'
+    });
+    expect(appState.Store.GetState(s => s.test)).toEqual('test');
+  });
 });

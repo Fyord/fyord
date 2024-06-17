@@ -10,26 +10,26 @@ const rootElementIds = {
   layout: `${rootId}-layout`
 };
 
-export class App {
+export class App<State extends object = Record<string, any>> {
   private static loggerSubscription: string | null = null;
   private static environment: Environments;
-  private static instance: App | null = null;
+  private static instance: App<any> | null = null;
 
   // eslint-disable-next-line max-params
-  public static Instance(
+  public static Instance<State extends object = Record<string, any>>(
     environment?: string,
     productionEnvironmentVariables = new Map<string, string>(),
     developmentEnvironmentVariables = new Map<string, string>(),
     router: IRouter = Router.Instance(),
     windowDocument: Document = document,
     mainConsole = globalThis.console
-  ): App {
+  ): App<State> {
     if (this.instance === null) {
       App.environment = environment === Environments.Development ? Environments.Development : Environments.Production;
-      this.instance = new App(router, windowDocument, mainConsole, productionEnvironmentVariables, developmentEnvironmentVariables);
+      this.instance = new App<State>(router, windowDocument, mainConsole, productionEnvironmentVariables, developmentEnvironmentVariables);
     }
 
-    return this.instance;
+    return this.instance as App<State>;
   }
   public static Destroy(): void {
     if (App.loggerSubscription) {
@@ -49,7 +49,7 @@ export class App {
 
   public EnvironmentVariables = new Map<string, string>();
   public Logger = Logger.Instance;
-  public Store = new EventStore<any>({});
+  public Store = new EventStore<State>({} as State);
   private currentLayout?: Jsx;
   private defaultLayout?: Jsx;
 
@@ -69,8 +69,8 @@ export class App {
     }
   }
 
-  public InitializeStore<T>(state: T): void {
-    this.Store.SetState<T>(state);
+  public InitializeStore(state: State): void {
+    this.Store.SetState(state);
   }
 
   public async Start(initialLayout: () => Promise<Jsx>): Promise<void> {
