@@ -3,7 +3,7 @@ import { Route } from './services/router/route';
 import { App } from './app';
 import { Component } from './component';
 import { ISeoService, SeoService } from './services/module';
-import { Jsx } from './jsx';
+import { Jsx, JsxRenderer } from './jsx';
 
 export enum RenderModes {
   Dynamic = '<!-- fyord-dynamic-render -->',
@@ -24,6 +24,7 @@ export abstract class Page extends Component {
   protected Description: string = Strings.Empty;
   protected ImageUrl: string = Strings.Empty;
   protected Layout?: () => Promise<Jsx>;
+  protected HeadElements: Jsx[] = [];
   private boundHref = Strings.Empty;
 
   constructor(
@@ -55,15 +56,21 @@ export abstract class Page extends Component {
       if (!this.Element || hrefIsNew) {
         await this.renderPageInMain(route as Route);
       }
-    } else {
+    } else if (this.App.Router.RouteHandled !== this.Id) {
       this.boundHref = Strings.Empty;
+      Array.from(this.windowDocument.head.querySelectorAll('[dynamic=true]'))
+        .forEach(e => e.remove());
     }
   }
 
   private async renderPageInMain(route: Route): Promise<void> {
     await this.App.UpdateLayout(this.Layout);
-
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
+    this.HeadElements.forEach(async e => {
+      e.attributes['dynamic'] = 'true';
+      const newHtml = await JsxRenderer.RenderJsx(e);
+      this.windowDocument.head.innerHTML += newHtml;
+    });
 
     const markup = await this.Render(route);
     this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
