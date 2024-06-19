@@ -1,3 +1,4 @@
+import { ParseJsx } from '../jsx';
 import { Mock, Times } from 'tsmockit';
 import { Strings } from 'tsbase/System/Strings';
 import { AsyncObservable } from 'tsbase/Patterns/Observable/AsyncObservable';
@@ -7,8 +8,12 @@ import { Page } from '../page';
 import { IRouter, ISeoService, Route } from '../services/module';
 
 class FakePage extends Page {
-  Template = async () => ('test' as any);
-  Route = async () => this.routeMatches === true;
+  Template = async () => <div>test</div>;
+  Route = async () => this.routeMatches;
+  HeadElements = [
+    <script src="fake" />,
+    <style link="fake" />
+  ];
 
   constructor(
     private routeMatches: boolean,
@@ -65,23 +70,18 @@ describe('Page', () => {
     mockRouter.Verify(r => r.RouteHandled, Times.Never);
   });
 
-  it('should handle route changes on match and component is not rendered', async () => {
-    mockDocument.Setup(d => d.getElementById(id), null);
-    const fakeMain = document.createElement('main');
-    mockApp.Setup(a => a.Main, fakeMain);
-    classUnderTest = new FakePage(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
-
-    await fakeRouteObservable.Publish(fakeRoute);
-
-    await TestHelpers.Expect(
-      () => fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) >= 0 ? fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) : 0,
-      (m) => m.toBeGreaterThanOrEqual(0));
-  });
-
-  it('should handle route changes on match with a different path and the component is rendered', async () => {
+  it('should handle route changes on match and render', async () => {
     fakeRoute.path = '/new-path';
+    fakeRoute.href = 'http://localhost/new-path';
+    const fakeHead = document.createElement('head');
+    fakeHead.innerHTML = 'test';
     const fakeElement = document.createElement('div');
-    mockDocument.Setup(d => d.getElementById(id), fakeElement);
+    mockDocument.SetupSequence([
+      [d => d.getElementById(id), null],
+      [d => d.getElementById(id), fakeElement],
+      [d => d.getElementById(id), fakeElement]
+    ]);
+    mockDocument.Setup(d => d.head, fakeHead);
     const fakeMain = document.createElement('main');
     mockApp.Setup(a => a.Main, fakeMain);
     mockRouter.Setup(r => r.RouteHandled, Strings.Empty);
@@ -90,8 +90,13 @@ describe('Page', () => {
     await fakeRouteObservable.Publish(fakeRoute);
 
     await TestHelpers.Expect(
-      () => fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) >= 0 ? fakeMain.innerHTML.indexOf(`<div id="${classUnderTest.Id}"`) : 0,
-      (m) => m.toBeGreaterThanOrEqual(0));
+      () => {
+        return fakeMain.innerHTML;
+      },
+      () => {
+        expect(fakeMain.innerHTML).toContain('<div id=\"12345\" style=\"display: block;\"><div>test</div></div>');
+        expect(fakeMain.innerHTML).toContain('<!-- fyord-hybrid-render -->');
+      });
   });
 
   it('should not re render if the component is already rendered at the same path', async () => {
