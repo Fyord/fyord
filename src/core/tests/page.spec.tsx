@@ -126,17 +126,9 @@ describe('Page', () => {
       () => fakeHead.innerHTML,
       m => m.toContain('<script src=\"fake\" dynamic=\"true\"></script><style link=\"fake\" dynamic=\"true\"></style>'));
 
-    fakeRouteObservable.Publish(fakeRoute);
-
-    mockRouter.Object.RouteHandled = '';
     classUnderTest.routeMatches = false;
-    fakeRouteObservable.Publish({
-      hashParams: [],
-      href: 'http://localhost',
-      path: '/fake',
-      queryParams: new Map<string, string>(),
-      routeParams: []
-    });
+    mockRouter.Object.RouteHandled = '';
+    fakeRouteObservable.Publish(fakeRoute);
 
     await TestHelpers.Expect(
       () => !fakeHead.innerHTML.includes('script') && fakeHead.innerHTML,

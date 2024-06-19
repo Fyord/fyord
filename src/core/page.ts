@@ -66,7 +66,7 @@ export abstract class Page extends Component {
   private async renderPageInMain(route: Route): Promise<void> {
     await this.App.UpdateLayout(this.Layout);
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
-    this.HeadElements.forEach(async e => {
+    this.HeadElements.forEach(e => {
       e.attributes['dynamic'] = 'true';
       const newElement = this.windowDocument.createElement(e.nodeName);
       for (const key in e.attributes) {
