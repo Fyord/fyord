@@ -53,8 +53,10 @@ describe('Page', () => {
     mockApp.Setup(a => a.Router, mockRouter.Object);
     mockSeoService.Setup(s => s.SetDefaultTags());
     mockApp.Setup(a => a.UpdateLayout());
-
     mockRouter.Setup(r => r.UseClientRouting());
+    mockDocument.Setup(d => d.createElement('script'), document.createElement('script'));
+    mockDocument.Setup(d => d.createElement('style'), document.createElement('style'));
+
     classUnderTest = new FakePage(false, mockSeoService.Object, mockApp.Object, mockDocument.Object);
   });
 

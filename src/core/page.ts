@@ -68,8 +68,12 @@ export abstract class Page extends Component {
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
     this.HeadElements.forEach(async e => {
       e.attributes['dynamic'] = 'true';
-      const newHtml = await JsxRenderer.RenderJsx(e);
-      this.windowDocument.head.innerHTML += newHtml;
+      const newElement = this.windowDocument.createElement(e.nodeName);
+      for (const key in e.attributes) {
+        const value = e.attributes[key];
+        newElement.setAttribute(key, value);
+      }
+      this.windowDocument.head.appendChild(newElement);
     });
 
     const markup = await this.Render(route);
