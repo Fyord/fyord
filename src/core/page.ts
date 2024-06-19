@@ -3,7 +3,7 @@ import { Route } from './services/router/route';
 import { App } from './app';
 import { Component } from './component';
 import { ISeoService, SeoService } from './services/module';
-import { Jsx, JsxRenderer } from './jsx';
+import { Jsx } from './jsx';
 
 export enum RenderModes {
   Dynamic = '<!-- fyord-dynamic-render -->',
