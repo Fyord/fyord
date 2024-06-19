@@ -10,10 +10,6 @@ import { IRouter, ISeoService, Route } from '../services/module';
 class FakePage extends Page {
   Template = async () => <div>test</div>;
   Route = async () => this.routeMatches;
-  HeadElements = [
-    <script src="fake" />,
-    <style link="fake" />
-  ];
 
   constructor(
     private routeMatches: boolean,
