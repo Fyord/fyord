@@ -64,7 +64,6 @@ export abstract class Page extends Component {
     await this.App.UpdateLayout(this.Layout);
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
 
-
     const markup = await this.Render(route);
     this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
     this.App.Router.UseClientRouting();

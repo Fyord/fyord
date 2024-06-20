@@ -31,14 +31,7 @@ export abstract class Component {
   ) {
     this.Id = `fy-${Guid.NewGuid()}`;
     Component.IssuedIds.push(this.Id);
-
-    this.mutationObserver = new MutationObserver(() => {
-      if (!this.Element) {
-        this.mutationObserver.disconnect();
-        this.headElements.forEach(e => e.remove());
-        this.Disconnected();
-      }
-    });
+    this.mutationObserver = new MutationObserver(this.disconnect);
   }
 
   /**
@@ -133,5 +126,13 @@ export abstract class Component {
       this.headElements.push(newElement);
       this.windowDocument.head.appendChild(newElement);
     });
+  };
+
+  private disconnect = () => {
+    if (!this.Element) {
+      this.mutationObserver.disconnect();
+      this.headElements.forEach(e => e.remove());
+      this.Disconnected();
+    }
   };
 }
