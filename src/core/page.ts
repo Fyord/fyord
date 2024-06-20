@@ -24,7 +24,7 @@ export abstract class Page extends Component {
   protected Description: string = Strings.Empty;
   protected ImageUrl: string = Strings.Empty;
   protected Layout?: () => Promise<Jsx>;
-  protected HeadElements: Omit<Jsx, 'children'>[] = [];
+  protected HeadElements?: () => Promise<Omit<Jsx, 'children'>[]>;
   private boundHref = Strings.Empty;
 
   constructor(
@@ -66,7 +66,7 @@ export abstract class Page extends Component {
   private async renderPageInMain(route: Route): Promise<void> {
     await this.App.UpdateLayout(this.Layout);
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
-    this.HeadElements.forEach(e => {
+    (await this.HeadElements?.())?.forEach(e => {
       e.attributes['dynamic'] = 'true';
       const newElement = this.windowDocument.createElement(e.nodeName);
       for (const key in e.attributes) {

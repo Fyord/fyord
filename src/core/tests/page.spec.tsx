@@ -12,7 +12,7 @@ const id = '12345';
 class FakePage extends Page {
   Template = async () => <div>test</div>;
   Route = async () => this.routeMatches;
-  HeadElements = [
+  HeadElements = async () => [
     <script src="fake" />,
     <style link="fake" />
   ];
