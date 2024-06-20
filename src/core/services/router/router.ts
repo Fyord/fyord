@@ -7,7 +7,6 @@ import { Route } from './route';
 export interface IRouter {
   Route: AsyncObservable<Route>;
   RouteHandled: string;
-  CurrentRoute?: Route;
   RouteChangeScrollingEnabled: boolean;
   UseClientRouting(): void;
   RouteTo(href: string, push?: boolean): Promise<Route>;
@@ -29,7 +28,6 @@ export class Router implements IRouter {
 
   public Route = new AsyncObservable<Route>();
   public RouteHandled = Strings.Empty;
-  public CurrentRoute?: Route;
   public RouteChangeScrollingEnabled = true;
 
   private constructor(
