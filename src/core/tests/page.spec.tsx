@@ -12,10 +12,6 @@ const id = '12345';
 class FakePage extends Page {
   Template = async () => <div>test</div>;
   Route = async () => this.routeMatches;
-  HeadElements = async () => [
-    <script src="fake" />,
-    <style link="fake" />
-  ];
 
   constructor(
     public routeMatches: boolean,
@@ -26,6 +22,13 @@ class FakePage extends Page {
     super(seoService, app, windowDocument);
     this.Id = id;
   }
+}
+
+class FakePageWithHeadElements extends FakePage {
+  HeadElements = async () => [
+    <script src="fake" />,
+    <style link="fake" />
+  ];
 }
 
 describe('Page', () => {
@@ -89,7 +92,7 @@ describe('Page', () => {
     const fakeMain = document.createElement('main');
     mockApp.Setup(a => a.Main, fakeMain);
     mockRouter.Setup(r => r.RouteHandled, Strings.Empty);
-    classUnderTest = new FakePage(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
+    classUnderTest = new FakePageWithHeadElements(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
 
     await fakeRouteObservable.Publish(fakeRoute);
 
@@ -104,10 +107,10 @@ describe('Page', () => {
 
     await TestHelpers.Expect(
       () => fakeHead.innerHTML,
-      m => m.toContain('<script src=\"fake\" dynamic=\"true\"></script><style link=\"fake\" dynamic=\"true\"></style>'));
+      m => m.toContain('<script src=\"fake\"></script><style link=\"fake\"></style>'));
   });
 
-  it('should remove dynamic head elements when routing away from page that rendered them', async () => {
+  it('should remove head elements when routing away from page that rendered them', async () => {
     fakeRoute.path = '/new-path';
     fakeRoute.href = 'http://localhost/new-path';
     const fakeHead = document.createElement('head');
@@ -118,13 +121,13 @@ describe('Page', () => {
     const fakeMain = document.createElement('main');
     mockApp.Setup(a => a.Main, fakeMain);
     mockRouter.Setup(r => r.RouteHandled, Strings.Empty);
-    classUnderTest = new FakePage(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
+    classUnderTest = new FakePageWithHeadElements(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
 
     await fakeRouteObservable.Publish(fakeRoute);
 
     await TestHelpers.Expect(
       () => fakeHead.innerHTML,
-      m => m.toContain('<script src=\"fake\" dynamic=\"true\"></script><style link=\"fake\" dynamic=\"true\"></style>'));
+      m => m.toContain('<script src=\"fake\"></script><style link=\"fake\"></style>'));
 
     classUnderTest.routeMatches = false;
     mockRouter.Object.RouteHandled = '';

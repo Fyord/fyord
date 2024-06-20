@@ -24,7 +24,8 @@ export abstract class Page extends Component {
   protected Description: string = Strings.Empty;
   protected ImageUrl: string = Strings.Empty;
   protected Layout?: () => Promise<Jsx>;
-  protected HeadElements?: () => Promise<Omit<Jsx, 'children'>[]>;
+  private headElements: HTMLElement[] = [];
+  protected HeadElements: () => Promise<Omit<Jsx, 'children'>[]> = async () => [];
   private boundHref = Strings.Empty;
 
   constructor(
@@ -58,21 +59,20 @@ export abstract class Page extends Component {
       }
     } else if (this.App.Router.RouteHandled !== this.Id) {
       this.boundHref = Strings.Empty;
-      Array.from(this.windowDocument.head.querySelectorAll('[dynamic=true]'))
-        .forEach(e => e.remove());
+      this.headElements.forEach(e => e.remove());
     }
   }
 
   private async renderPageInMain(route: Route): Promise<void> {
     await this.App.UpdateLayout(this.Layout);
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
-    (await this.HeadElements?.())?.forEach(e => {
-      e.attributes['dynamic'] = 'true';
+    (await this.HeadElements()).forEach(e => {
       const newElement = this.windowDocument.createElement(e.nodeName);
       for (const key in e.attributes) {
         const value = e.attributes[key];
         newElement.setAttribute(key, value);
       }
+      this.headElements.push(newElement);
       this.windowDocument.head.appendChild(newElement);
     });
 
