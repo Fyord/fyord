@@ -24,7 +24,7 @@ export abstract class Page extends Component {
   protected Description: string = Strings.Empty;
   protected ImageUrl: string = Strings.Empty;
   protected Layout?: () => Promise<Jsx>;
-  protected HeadElements: Jsx[] = [];
+  protected HeadElements: Omit<Jsx, 'children'>[] = [];
   private boundHref = Strings.Empty;
 
   constructor(
