@@ -49,8 +49,10 @@ export abstract class Component {
    */
   public async Render(route?: Route, includeWrapper = true): Promise<string> {
     Asap(() => {
-      if (this.Element && this.Element.parentElement) {
-        this.mutationObserver.observe(this.Element.parentElement, { childList: true });
+      if (this.Element?.parentElement) {
+        this.mutationObserver.observe(this.Element.parentElement, {
+          childList: true, subtree: true
+        });
       }
     });
 
