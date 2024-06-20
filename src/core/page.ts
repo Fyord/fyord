@@ -24,8 +24,6 @@ export abstract class Page extends Component {
   protected Description: string = Strings.Empty;
   protected ImageUrl: string = Strings.Empty;
   protected Layout?: () => Promise<Jsx>;
-  private headElements: HTMLElement[] = [];
-  protected HeadElements: () => Promise<Omit<Jsx, 'children'>[]> = async () => [];
   private boundHref = Strings.Empty;
 
   constructor(
@@ -57,24 +55,15 @@ export abstract class Page extends Component {
       if (!this.Element || hrefIsNew) {
         await this.renderPageInMain(route as Route);
       }
-    } else if (this.App.Router.RouteHandled !== this.Id) {
+    } else {
       this.boundHref = Strings.Empty;
-      this.headElements.forEach(e => e.remove());
     }
   }
 
   private async renderPageInMain(route: Route): Promise<void> {
     await this.App.UpdateLayout(this.Layout);
     this.seoService.SetDefaultTags(this.Title, this.Description, this.ImageUrl);
-    (await this.HeadElements()).forEach(e => {
-      const newElement = this.windowDocument.createElement(e.nodeName);
-      for (const key in e.attributes) {
-        const value = e.attributes[key];
-        newElement.setAttribute(key, value);
-      }
-      this.headElements.push(newElement);
-      this.windowDocument.head.appendChild(newElement);
-    });
+
 
     const markup = await this.Render(route);
     this.App.Main.innerHTML = `${markup}\n${this.RenderMode}`;
