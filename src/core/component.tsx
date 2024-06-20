@@ -18,7 +18,9 @@ export abstract class Component {
     return this.windowDocument.getElementById(this.Id);
   }
   protected RootElementDisplayStyle: 'block' | 'inline-block' = 'inline-block';
+  protected HeadElements: () => Promise<Omit<Jsx, 'children'>[]> = async () => [];
 
+  private headElements: HTMLElement[] = [];
   private ids = new Map<string, string>();
   private mutationObserver: MutationObserver;
   private reRenderQueued = false;
@@ -33,6 +35,7 @@ export abstract class Component {
     this.mutationObserver = new MutationObserver(() => {
       if (!this.Element) {
         this.mutationObserver.disconnect();
+        this.headElements.forEach(e => e.remove());
         this.Disconnected();
       }
     });
@@ -48,11 +51,17 @@ export abstract class Component {
    * @param route
    */
   public async Render(route?: Route, includeWrapper = true): Promise<string> {
-    Asap(() => {
-      if (this.Element && this.Element.parentElement) {
-        this.mutationObserver.observe(this.Element.parentElement, { childList: true });
-      }
-    });
+    if (!this.Element) {
+      Asap(async () => {
+        if (this.Element?.parentElement) {
+          this.mutationObserver.observe(this.Element.parentElement, {
+            childList: true,
+            subtree: true
+          });
+          await this.setHeadElements();
+        }
+      });
+    }
 
     const content = await this.getOuterHtml(await this.Template(route));
 
@@ -113,4 +122,16 @@ export abstract class Component {
       return await JsxRenderer.RenderJsx(html);
     }
   }
+
+  private setHeadElements = async () => {
+    (await this.HeadElements()).forEach(e => {
+      const newElement = this.windowDocument.createElement(e.nodeName);
+      for (const key in e.attributes) {
+        const value = e.attributes[key];
+        newElement.setAttribute(key, value);
+      }
+      this.headElements.push(newElement);
+      this.windowDocument.head.appendChild(newElement);
+    });
+  };
 }

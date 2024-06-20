@@ -7,18 +7,28 @@ import { App } from '../app';
 import { Page } from '../page';
 import { IRouter, ISeoService, Route } from '../services/module';
 
+const id = '12345';
+
 class FakePage extends Page {
   Template = async () => <div>test</div>;
   Route = async () => this.routeMatches;
 
   constructor(
-    private routeMatches: boolean,
+    public routeMatches: boolean,
     seoService?: ISeoService,
     app?: App,
     windowDocument?: Document
   ) {
     super(seoService, app, windowDocument);
+    this.Id = id;
   }
+}
+
+class FakePageWithHeadElements extends FakePage {
+  HeadElements = async () => [
+    <script src="fake" />,
+    <style link="fake" />
+  ];
 }
 
 describe('Page', () => {
@@ -29,7 +39,6 @@ describe('Page', () => {
   const mockSeoService = new Mock<ISeoService>();
   let fakeRouteObservable: AsyncObservable<Route>;
   let fakeRoute: Route;
-  const id = '12345';
 
   beforeEach(() => {
     const fakeElement = document.createElement('div');
@@ -47,9 +56,11 @@ describe('Page', () => {
     mockApp.Setup(a => a.Router, mockRouter.Object);
     mockSeoService.Setup(s => s.SetDefaultTags());
     mockApp.Setup(a => a.UpdateLayout());
+    mockRouter.Setup(r => r.UseClientRouting());
+    mockDocument.Setup(d => d.createElement('script'), document.createElement('script'));
+    mockDocument.Setup(d => d.createElement('style'), document.createElement('style'));
 
-    classUnderTest = new FakePage(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
-    classUnderTest.Id = id;
+    classUnderTest = new FakePage(false, mockSeoService.Object, mockApp.Object, mockDocument.Object);
   });
 
   it('should construct', () => {
@@ -81,7 +92,7 @@ describe('Page', () => {
     const fakeMain = document.createElement('main');
     mockApp.Setup(a => a.Main, fakeMain);
     mockRouter.Setup(r => r.RouteHandled, Strings.Empty);
-    classUnderTest = new FakePage(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
+    classUnderTest = new FakePageWithHeadElements(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
 
     await fakeRouteObservable.Publish(fakeRoute);
 
@@ -93,6 +104,38 @@ describe('Page', () => {
         expect(fakeMain.innerHTML).toContain('<div id=\"12345\" style=\"display: block;\"><div>test</div></div>');
         expect(fakeMain.innerHTML).toContain('<!-- fyord-hybrid-render -->');
       });
+
+    await TestHelpers.Expect(
+      () => fakeHead.innerHTML,
+      m => m.toContain('<script src=\"fake\"></script><style link=\"fake\"></style>'));
+  });
+
+  it('should remove head elements when routing away from page that rendered them', async () => {
+    fakeRoute.path = '/new-path';
+    fakeRoute.href = 'http://localhost/new-path';
+    const fakeHead = document.createElement('head');
+    fakeHead.innerHTML = 'test';
+    const fakeElement = document.createElement('div');
+    mockDocument.Setup(d => d.getElementById(id), fakeElement);
+    mockDocument.Setup(d => d.head, fakeHead);
+    const fakeMain = document.createElement('main');
+    mockApp.Setup(a => a.Main, fakeMain);
+    mockRouter.Setup(r => r.RouteHandled, Strings.Empty);
+    classUnderTest = new FakePageWithHeadElements(true, mockSeoService.Object, mockApp.Object, mockDocument.Object);
+
+    await fakeRouteObservable.Publish(fakeRoute);
+
+    await TestHelpers.Expect(
+      () => fakeHead.innerHTML,
+      m => m.toContain('<script src=\"fake\"></script><style link=\"fake\"></style>'));
+
+    classUnderTest.routeMatches = false;
+    mockRouter.Object.RouteHandled = '';
+    fakeRouteObservable.Publish(fakeRoute);
+
+    await TestHelpers.Expect(
+      () => !fakeHead.innerHTML.includes('script') && fakeHead.innerHTML,
+      m => m.toEqual('test'));
   });
 
   it('should not re render if the component is already rendered at the same path', async () => {
