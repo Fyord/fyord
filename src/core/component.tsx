@@ -49,7 +49,7 @@ export abstract class Component {
   ): Promise<string> {
     if (!this.Element) {
       Asap(() => {
-        if (this.Element?.parentElement) {
+        if (this.Element) {
           this.mutationObserver.observe(this.App.Main, {
             childList: true,
             subtree: true
@@ -134,7 +134,7 @@ export abstract class Component {
     });
   };
 
-  private disconnect: MutationCallback = () => {
+  private disconnect = () => {
     if (!this.Element) {
       this.mutationObserver.disconnect();
       this.headElements.forEach(e => e.remove());

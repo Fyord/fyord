@@ -46,6 +46,8 @@ describe('Component', () => {
     mockComponentState.Setup(s => s.ObservableAt(Strings.Empty), fakeComponentStateObservable);
     mockComponentState.Setup(s => s.GetState(Strings.Empty), Strings.Empty);
     mockComponentState.Setup(s => s.SetState(Strings.Empty, Strings.Empty));
+    const fakeMain = document.createElement('main');
+    mockApp.Setup(a => a.Main, fakeMain);
 
     classUnderTest = new FakeComponent(mockDocument.Object, mockApp.Object);
     classUnderTest.SetState(mockComponentState.Object);
@@ -121,8 +123,9 @@ describe('Component', () => {
   });
 
   it('should observe mutations on parent element and call disconnected when element no longer exists in the dom', async () => {
-    classUnderTest = new FakeComponent();
-    document.body.innerHTML = await classUnderTest.Render();
+    classUnderTest = new FakeComponent(undefined, mockApp.Object);
+    mockApp.Object.Main.innerHTML = await classUnderTest.Render();
+    document.body.appendChild(mockApp.Object.Main);
 
     Asap(() => {
       classUnderTest.Element?.remove();
@@ -134,7 +137,7 @@ describe('Component', () => {
   });
 
   it('should observe mutations on parent element BUT NOT call disconnected when the component is still in the dom', async () => {
-    classUnderTest = new FakeComponent();
+    classUnderTest = new FakeComponent(undefined, mockApp.Object);
     document.body.innerHTML = await classUnderTest.Render();
 
     Asap(() => {

@@ -121,10 +121,7 @@ describe('Page', () => {
     const mockElement = new Mock<HTMLElement>();
     mockElement.Setup(e => e.parentElement, fakeMain);
     mockDocument.SetupSequence([
-      [d => d.getElementById(id), null],
-      [d => d.getElementById(id), null],
-      [d => d.getElementById(id), mockElement.Object],
-      [d => d.getElementById(id), mockElement.Object]
+      [d => d.getElementById(id), null]
     ]);
     mockDocument.Setup(d => d.head, fakeHead);
     mockApp.Setup(a => a.Main, fakeMain);
