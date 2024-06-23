@@ -43,21 +43,23 @@ export abstract class Component {
    * Returns the render-able html from the component's template
    * @param route
    */
-  public async Render(route?: Route, includeWrapper = true): Promise<string> {
+  public async Render(
+    route = this.App.Router.Route.CurrentIssue,
+    includeWrapper = true
+  ): Promise<string> {
     if (!this.Element) {
-      Asap(async () => {
+      Asap(() => {
         if (this.Element?.parentElement) {
-          this.mutationObserver.observe(this.Element.parentElement, {
+          this.mutationObserver.observe(this.App.Main, {
             childList: true,
             subtree: true
           });
-          await this.setHeadElements();
         }
       });
     }
 
+    await this.setHeadElements();
     const content = await this.getOuterHtml(await this.Template(route));
-
     return includeWrapper ? /*html*/ `<div id="${this.Id}" style="display: ${this.RootElementDisplayStyle};">${content}</div>` : content;
   }
 
@@ -65,7 +67,7 @@ export abstract class Component {
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior
    * @param route
    */
-  public async ReRender(route?: Route): Promise<void> {
+  public async ReRender(): Promise<void> {
     if (!this.reRenderQueued) {
       this.reRenderQueued = true;
       Asap(async () => {
@@ -77,7 +79,7 @@ export abstract class Component {
             e.removeAttribute('ref');
           });
 
-          const newRender = await this.Render(route, false);
+          const newRender = await this.Render(undefined, false);
           const newElement = document.createElement('div');
           newElement.innerHTML = newRender;
 
@@ -123,12 +125,16 @@ export abstract class Component {
         const value = e.attributes[key];
         newElement.setAttribute(key, value);
       }
-      this.headElements.push(newElement);
-      this.windowDocument.head.appendChild(newElement);
+      const selector = `${newElement.tagName.toLowerCase()}${Array.from(newElement.attributes)
+        .map(a => `[${a.name}="${a.value}"]`).join('')}`;
+      if (!this.windowDocument.head.querySelector(selector)) {
+        this.headElements.push(newElement);
+        this.windowDocument.head.appendChild(newElement);
+      }
     });
   };
 
-  private disconnect = () => {
+  private disconnect: MutationCallback = () => {
     if (!this.Element) {
       this.mutationObserver.disconnect();
       this.headElements.forEach(e => e.remove());

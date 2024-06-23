@@ -1,10 +1,11 @@
 import { Guid } from 'tsbase/System/Guid';
 import { Strings } from 'tsbase/System/Strings';
 import { Command } from 'tsbase/Patterns/CommandQuery/Command';
+import { Router } from './services/router/router';
+import { Asap } from '../utilities/asap';
 import { Component } from './component';
 import { EventTypes } from './eventTypes';
 import { DomEvents } from './domEvents';
-import { Asap } from '../utilities/asap';
 
 export type Jsx = {
   attributes: Record<string, string>,
@@ -18,7 +19,7 @@ export function ParseJsx(nodeName, attributes, ...children): Promise<string> | J
   if (typeof nodeName === 'function' && nodeName.constructor) {
     const instance = new nodeName(attributes ?? undefined, children.length > 0 ? children : undefined) as Component;
     return new Promise(async (resolve) => {
-      const result = await instance.Render();
+      const result = await instance.Render(Router.Instance().Route.CurrentIssue);
       resolve(result);
     });
   }
