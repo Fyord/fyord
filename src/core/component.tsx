@@ -46,8 +46,12 @@ export abstract class Component {
   /**
    * Returns the render-able html from the component's template
    * @param route
+   * @param includeWrapper
    */
-  public async Render(route?: Route, includeWrapper = true): Promise<string> {
+  public async Render(
+    route = this.App.Router.Route.CurrentIssue,
+    includeWrapper = true
+  ): Promise<string> {
     Asap(() => {
       if (this.Element?.parentElement) {
         this.mutationObserver.observe(this.Element.parentElement, {
@@ -65,7 +69,7 @@ export abstract class Component {
    * Replace the currently rendered component's innerHtml with a fresh version then rerun behavior
    * @param route
    */
-  public async ReRender(route?: Route): Promise<void> {
+  public async ReRender(): Promise<void> {
     if (!this.reRenderQueued) {
       this.reRenderQueued = true;
       Asap(async () => {
@@ -77,7 +81,7 @@ export abstract class Component {
             e.removeAttribute('ref');
           });
 
-          const newRender = await this.Render(route, false);
+          const newRender = await this.Render(undefined, false);
           const newElement = document.createElement('div');
           newElement.innerHTML = newRender;
 

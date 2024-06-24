@@ -14,7 +14,7 @@ function definePropertyForStateInStore(target: Component, key: string, storeType
 
     if (!component[subKey]) {
       const subId = store.ObservableAt(key).Subscribe(() => {
-        component.ReRender(component.App.Router.Route.CurrentIssue);
+        component.ReRender();
       });
       component[subKey] = subId;
     }
