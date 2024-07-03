@@ -192,6 +192,7 @@ describe('App', () => {
     appState.InitializeStore({
       test: 'test'
     });
-    expect(appState.Store.GetState(s => s.test)).toEqual('test');
+    const test = appState.Store.GetState(s => s.test);
+    expect(test).toEqual('test');
   });
 });

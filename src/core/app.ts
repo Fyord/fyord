@@ -1,5 +1,5 @@
 import { AsyncCommand } from 'tsbase/Patterns/CommandQuery/AsyncCommand';
-import { EventStore } from 'tsbase/Patterns/EventStore/module';
+import { IEventStore, EventStore } from 'tsbase/Patterns/EventStore/module';
 import { Logger } from 'tsbase/Utility/Logger/Logger';
 import { Environments } from './environments';
 import { IRouter, Router } from './services/module';
@@ -49,7 +49,7 @@ export class App<State extends object = any> {
 
   public EnvironmentVariables = new Map<string, string>();
   public Logger = Logger.Instance;
-  public Store = new EventStore<State>({} as State);
+  public Store: IEventStore<State> = new EventStore({} as State);
   private currentLayout?: Jsx;
   private defaultLayout?: Jsx;
 
