@@ -43,7 +43,7 @@ describe('JsxRenderer', () => {
     expect(await JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
   });
 
-  it.only('should add event listeners to bound events', async () => {
+  it('should add event listeners to bound events', async () => {
     let testVariable = 0;
     const jsxToParse = <button id="test-id" onclick={() => testVariable = 1}></button>;
     const renderedHtml = await JsxRenderer.RenderJsx(jsxToParse);
@@ -58,7 +58,7 @@ describe('JsxRenderer', () => {
       (m) => m.toBeTruthy());
   });
 
-  it.only('should add event listeners to bound events when an id is declared and event handler is declared first (BUG 63)', async () => {
+  it('should add event listeners to bound events when an id is declared and event handler is declared first (BUG 63)', async () => {
     let testVariable = 0;
     const jsxToParse = <button onclick={() => testVariable = 1} id="test-id"></button>;
     const renderedHtml = await JsxRenderer.RenderJsx(jsxToParse);
