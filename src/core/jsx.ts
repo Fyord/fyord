@@ -49,18 +49,17 @@ export class JsxRenderer {
   // eslint-disable-next-line complexity
   private static async transformJsxToHtml(jsx: Jsx, mainDocument: Document | ShadowRoot): Promise<HTMLElement> {
     const dom: HTMLElement = document.createElement(jsx.nodeName);
-
-    for (const key in jsx.attributes) {
-      if (DomEvents.includes(key)) {
-        this.addElementEventListener(key, jsx, dom, mainDocument);
-      } else {
-        const value = jsx.attributes[key];
-        const shouldAddAttribute = !(typeof value === 'boolean' && value === false);
-        if (shouldAddAttribute) {
-          dom.setAttribute(key, jsx.attributes[key]);
-        }
+    jsx.attributes = jsx.attributes || {};
+    const eventHandlerKeys = Object.keys(jsx.attributes).filter(k => DomEvents.includes(k));
+    const otherAttributeKeys = Object.keys(jsx.attributes).filter(k => !DomEvents.includes(k));
+    otherAttributeKeys.forEach(key => {
+      const value = jsx.attributes[key];
+      const shouldAddAttribute = !(typeof value === 'boolean' && value === false);
+      if (shouldAddAttribute) {
+        dom.setAttribute(key, jsx.attributes[key]);
       }
-    }
+    });
+    eventHandlerKeys.forEach(key => this.addElementEventListener(key, jsx, dom, mainDocument));
 
     for (const child of await jsx.children) {
       if (typeof child === 'string' || typeof child === 'number') {

@@ -58,6 +58,21 @@ describe('JsxRenderer', () => {
       (m) => m.toBeTruthy());
   });
 
+  it('should add event listeners to bound events when an id is declared and event handler is declared first (BUG 63)', async () => {
+    let testVariable = 0;
+    const jsxToParse = <button onclick={() => testVariable = 1} id="test-id"></button>;
+    const renderedHtml = await JsxRenderer.RenderJsx(jsxToParse);
+    document.body.innerHTML = renderedHtml;
+
+    expect(renderedHtml).toEqual('<button id="test-id"></button>');
+    await TestHelpers.Expect(
+      () => {
+        document.getElementById('test-id')?.click();
+        return testVariable === 1;
+      },
+      (m) => m.toBeTruthy());
+  });
+
   it('should not attempt to add event listeners if bind element is deleted', async () => {
     document.body.innerHTML = Strings.Empty;
     const jsxToParse = <button id="test-id" onclick={() => null}></button>;

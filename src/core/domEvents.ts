@@ -1,5 +1,4 @@
 import { EventTypes } from './eventTypes';
 
-export const DomEvents = Object.values(EventTypes).map((eventType) => {
-  return `on${eventType}`;
-});
+export const DomEvents = Object.values(EventTypes)
+  .map((eventType) => `on${eventType}`);
