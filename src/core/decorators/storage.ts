@@ -3,7 +3,7 @@ import { DomStorage, DomStorageMode } from 'tsbase/Persistence/GenericStorage/Do
 import { Component } from '../component';
 import { Result } from 'tsbase/Patterns/Result/Result';
 
-class EmbeddedScriptStorage implements IGenericStorage {
+class EmbeddedStorage implements IGenericStorage {
   // #region intentionally not implemented
   Get<T>(): Result<T | null> { throw new Error(); }
   Set(): Result<null> { throw new Error(); }
@@ -30,14 +30,14 @@ class EmbeddedScriptStorage implements IGenericStorage {
 enum StorageModes {
   Session = DomStorageMode.Session,
   Local = DomStorageMode.Local,
-  Static = 2
+  Embedded = 2
 }
 
 const storageTypePostfix = '_storage_type';
 
 function definePropertyForStorage(target: Component, key: string, type: StorageModes) {
-  const storage = type === StorageModes.Static ?
-    new EmbeddedScriptStorage() :
+  const storage = type === StorageModes.Embedded ?
+    new EmbeddedStorage() :
     new DomStorage(type as unknown as DomStorageMode);
 
   const getter = function () {
@@ -78,6 +78,6 @@ export function Local(target: Component, key: string) {
   definePropertyForStorage(target, key, StorageModes.Local);
 }
 
-export function Static(target: Component, key: string) {
-  definePropertyForStorage(target, key, StorageModes.Static);
+export function Embedded(target: Component, key: string) {
+  definePropertyForStorage(target, key, StorageModes.Embedded);
 }
