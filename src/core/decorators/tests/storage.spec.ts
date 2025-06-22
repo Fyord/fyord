@@ -2,12 +2,13 @@ import { Strings } from 'tsbase/System/Strings';
 import { Component } from '../../component';
 import { Jsx } from '../../jsx';
 import { Route } from '../../services/module';
-import { Session, Local } from '../storage';
+import { Session, Local, Embedded } from '../storage';
 
 class TestComponent extends Component {
   public Template: (route?: Route) => Promise<Jsx> = async () => (Strings.Empty as any);
   @Session public SessionTest: any = 'session';
   @Local public LocalTest: any = 'local';
+  @Embedded public EmbeddedTest: any = 'embedded';
 }
 
 describe('Storage Decorators', () => {
@@ -21,6 +22,16 @@ describe('Storage Decorators', () => {
   it('should store a string in local storage', () => {
     expect(testComponent.LocalTest).toEqual('local');
     expect(window.localStorage.getItem('LocalTest')).toEqual('local');
+  });
+
+  it('should store a string in embedded storage', () => {
+    expect(testComponent.LocalTest).toEqual('local');
+    expect((document.getElementById('EmbeddedTest') as HTMLScriptElement).innerHTML).toEqual('embedded');
+  });
+
+  it('should update a string in embedded storage', () => {
+    testComponent.EmbeddedTest = 'updated';
+    expect((document.getElementById('EmbeddedTest') as HTMLScriptElement).innerHTML).toEqual('updated');
   });
 
   it('should store a number and retrieve a number', () => {
