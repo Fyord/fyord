@@ -43,9 +43,24 @@ describe('JsxRenderer', () => {
     expect(await JsxRenderer.RenderJsx(jsxToParse)).toEqual(expectedOuterHtml);
   });
 
-  it('should add event listeners to bound events', async () => {
+  it.only('should add event listeners to bound events', async () => {
     let testVariable = 0;
     const jsxToParse = <button id="test-id" onclick={() => testVariable = 1}></button>;
+    const renderedHtml = await JsxRenderer.RenderJsx(jsxToParse);
+    document.body.innerHTML = renderedHtml;
+
+    expect(renderedHtml).toEqual('<button id="test-id"></button>');
+    await TestHelpers.Expect(
+      () => {
+        document.getElementById('test-id')?.click();
+        return testVariable === 1;
+      },
+      (m) => m.toBeTruthy());
+  });
+
+  it.only('should add event listeners to bound events when an id is declared and event handler is declared first (BUG 63)', async () => {
+    let testVariable = 0;
+    const jsxToParse = <button onclick={() => testVariable = 1} id="test-id"></button>;
     const renderedHtml = await JsxRenderer.RenderJsx(jsxToParse);
     document.body.innerHTML = renderedHtml;
 
