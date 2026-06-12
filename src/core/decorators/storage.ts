@@ -10,7 +10,7 @@ class EmbeddedStorage implements IGenericStorage {
   Remove(): Result<null> { throw new Error(); }
   // #endregion
   GetValue(key: string): Result<string | null> {
-    return new Result(document.getElementById(key)?.innerHTML);
+    return new Result(document.getElementById(key)?.textContent);
   }
   SetValue(key: string, value: any): Result<null> {
     const existingScriptTag = document.getElementById(key) as HTMLScriptElement;

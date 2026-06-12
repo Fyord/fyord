@@ -54,9 +54,10 @@ export class JsxRenderer {
     const otherAttributeKeys = Object.keys(jsx.attributes).filter(k => !DomEvents.includes(k));
     otherAttributeKeys.forEach(key => {
       const value = jsx.attributes[key];
-      const shouldAddAttribute = !(typeof value === 'boolean' && value === false);
+      const safeAttrValue = /^\s*(javascript:|data:text\/html|vbscript:)/i.test(value) ? '' : value;
+      const shouldAddAttribute = !!safeAttrValue && !(typeof value === 'boolean' && value === false);
       if (shouldAddAttribute) {
-        dom.setAttribute(key, jsx.attributes[key]);
+        dom.setAttribute(key, safeAttrValue);
       }
     });
     eventHandlerKeys.forEach(key => this.addElementEventListener(key, jsx, dom, mainDocument));
