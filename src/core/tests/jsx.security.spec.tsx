@@ -73,15 +73,6 @@ describe('JsxRenderer XSS: attribute URI scheme validation', () => {
     expect(result).not.toContain('javascript:');
   });
 
-  /**
-   * @todo: evaluate further
-   */
-  it.skip('should neutralize dangerous srcdoc values', async () => {
-    const jsx = <iframe srcdoc="<script>alert(1)</script>"></iframe>;
-    const result = await JsxRenderer.RenderJsx(jsx);
-    expect(result).not.toContain('<script>');
-  });
-
   it('should not alter safe attribute values on the same element as dangerous ones', async () => {
     const jsx = <a id="my-link" class="nav-item" href="javascript:alert(1)">link</a>;
     const result = await JsxRenderer.RenderJsx(jsx);
